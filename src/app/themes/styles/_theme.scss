@@ -1,0 +1,9 @@
+@use "@angular/material" as mat;
+@import "theme-reset";
+.app {
+  &.purple {
+    @import "skins/purple";
+    @include mat.all-component-colors($purple-theme);
+    @include theme-reset($purple-theme);
+  }
+}

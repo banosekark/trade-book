@@ -1,0 +1,22 @@
+.trade-calculator-window {
+  .header {
+    padding: 10px;
+    .search-field {
+      width: 100%;
+      .autocomplete-pane {
+        border-left: 1px solid #7b1fa2 !important;
+      }
+    }
+  }
+}
+
+::ng-deep .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+  font-size: 30px !important;
+  cursor: default;
+}
+
+::ng-deep
+  .mdc-text-field--filled:not(.mdc-text-field--disabled)
+  .mdc-text-field__input {
+  color: #fff !important;
+}

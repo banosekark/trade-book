@@ -1,1 +1,22 @@
-<p>trade-calculator works!</p>
+<div class="trade-calculator-window">
+  <form>
+    <!--header start -->
+    <div class="header bg-primary">
+      <mat-form-field class="search-field" color="primary">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="myControl" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" class="autocomplete-pane">
+          @for (option of filteredOptions | async; track option) {
+          <mat-option [value]="option">{{option.name}}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+    </div>
+    <!-- header end-->
+    <mat-dialog-content>This dialog showcases the title, close, content and actions elements.</mat-dialog-content>
+  </form>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</div>
