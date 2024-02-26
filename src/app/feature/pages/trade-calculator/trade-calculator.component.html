@@ -2,6 +2,7 @@
   <form>
     <!--header start -->
     <div class="header bg-primary">
+      <mat-slide-toggle color="primary" class="float-end" hideIcon></mat-slide-toggle>
       <mat-form-field class="search-field" color="primary">
         <mat-icon matPrefix>search</mat-icon>
         <input matInput [formControl]="myControl" [matAutocomplete]="auto">
@@ -10,7 +11,9 @@
           <mat-option [value]="option">{{option.name}}</mat-option>
           }
         </mat-autocomplete>
+
       </mat-form-field>
+
 
     </div>
     <!-- header end-->
