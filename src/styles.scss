@@ -1,6 +1,14 @@
+@import "app/themes/styles/mixins";
 @import "app/themes/styles/theme";
 
 // .mat-form-field {
 //   border-bottom: 0px;
 //   // background-color: transparent;
 // }
+//Changing The Default Settings..
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
