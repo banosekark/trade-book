@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { TradeCalculatorComponent } from '../trade-calculator/trade-calculator.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [TradeCalculatorComponent, MatButtonModule],
+  imports: [TradeCalculatorComponent, MatButtonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

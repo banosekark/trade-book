@@ -1,10 +1,18 @@
 .trade-calculator-window {
   .header {
     padding: 10px 10px 0;
+    // ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    //   display: none !important;
+    // }
     .search-field {
       width: 100%;
       .autocomplete-pane {
         border-left: 1px solid #7b1fa2 !important;
+      }
+      ::ng-deep .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+        font-size: 30px !important;
+        cursor: default;
+        border: 0;
       }
     }
   }
@@ -13,15 +21,16 @@
     mat-tab-group {
       width: 800px;
       .tab-body {
-        padding: 0px 20px 10px;
+        padding: 10px;
+        mat-form-field {
+          width: 100%;
+        }
         .input-value {
           margin-top: 10px;
-          display: flex;
           justify-content: space-between;
         }
         .result-value {
           margin-top: 10px;
-          display: flex;
           justify-content: space-between;
         }
       }
@@ -32,11 +41,11 @@
   }
 }
 
-::ng-deep .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
-  // font-size: 30px !important;
-  cursor: default;
-  border: 0;
-}
+// ::ng-deep .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+//   // font-size: 30px !important;
+//   cursor: default;
+//   border: 0;
+// }
 
 ::ng-deep
   .mdc-text-field--filled:not(.mdc-text-field--disabled)
@@ -65,6 +74,10 @@
   // display: none;
 }
 
+::ng-deep .cdk-overlay-pane.mat-mdc-dialog-panel {
+  max-width: 100vw !important;
+}
+
 ::ng-deep mat-slide-toggle {
   --mdc-switch-unselected-handle-color: rgb(255, 0, 0) !important;
   --mdc-switch-unselected-pressed-handle-color: rgb(255, 0, 0) !important;
@@ -81,4 +94,19 @@
   --mdc-switch-unselected-pressed-track-color: rgb(249, 150, 150) !important;
   --mdc-switch-unselected-hover-track-color: rgb(249, 150, 150) !important;
   --mdc-switch-unselected-focus-track-color: rgb(249, 150, 150) !important;
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (max-width: 576px) {
+  .trade-calculator-window {
+    mat-dialog-content {
+      mat-tab-group {
+        .tab-body {
+          .mat-mdc-form-field {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
 }

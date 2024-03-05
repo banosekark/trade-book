@@ -2,20 +2,17 @@
   <form>
     <!--header start -->
     <div class="header" [ngClass]="tradeType ? 'bg-primary' : 'bg-warn'">
-      <mat-slide-toggle color="primary" class="float-end" hideIcon
-        (change)="onChangeTradeType($event)"></mat-slide-toggle>
-      <mat-form-field class="search-field" color="primary">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="myControl" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" class="autocomplete-pane">
-          @for (option of filteredOptions | async; track option) {
-          <mat-option [value]="option">{{option.name}}</mat-option>
-          }
-        </mat-autocomplete>
-
-      </mat-form-field>
-
-
+      <div>
+        <mat-form-field class="search-field" color="primary">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [formControl]="myControl" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" class="autocomplete-pane">
+            @for (option of filteredOptions | async; track option) {
+            <mat-option [value]="option">{{option.name}}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
     </div>
     <!-- header end-->
     <mat-dialog-content>
@@ -23,74 +20,94 @@
         <mat-tab label="First">
           <mat-divider></mat-divider>
           <div class="tab-body">
+            <mat-slide-toggle color="primary" hideIcon (change)="onChangeTradeType($event)">Trade
+              Type</mat-slide-toggle>
             <div class="input-value">
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
+              <div class="row">
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Entry Point</mat-label>
+                    <input matInput placeholder="Enter Price">
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>SL Point</mat-label>
+                    <input matInput placeholder="Enter Price">
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Risk Amount</mat-label>
+                    <input matInput>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+              </div>
             </div>
           </div>
           <mat-divider></mat-divider>
-          <div class="tab-body">
-            <mat-radio-group aria-label="Select an option">
-              <mat-radio-button value="1">Option 1</mat-radio-button>
-              <mat-radio-button value="2">Option 2</mat-radio-button>
-            </mat-radio-group>
+          <div class=" tab-body">
             <div class="result-value">
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
+              <div class="row">
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Reward Possible</mat-label>
+                    <input matInput>
+                    <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label *ngIf="isFirstIcon">Quantity</mat-label>
+                    <mat-label *ngIf="!isFirstIcon">Lot</mat-label>
+                    <input matInput>
+                    <mat-icon matSuffix *ngIf="isFirstIcon" (click)="changeIcon()">layers</mat-icon>
+                    <mat-icon matSuffix *ngIf="!isFirstIcon" matSuffix (click)="changeIcon()">crop_square</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Captal Required</mat-label>
+                    <input matInput>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+              </div>
             </div>
           </div>
           <div class="tab-body">
             <div class="result-value">
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
-              <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                <mat-label>Outline form field</mat-label>
-                <input matInput placeholder="Placeholder">
-                <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-                <mat-hint>Hint</mat-hint>
-              </mat-form-field>
+              <div class="row">
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>% Of Total Capital</mat-label>
+                    <input matInput>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Risk Per Trade</mat-label>
+                    <input matInput placeholder="Placeholder">
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label *ngIf="isFirstIcon">Quantity</mat-label>
+                    <mat-label *ngIf="!isFirstIcon">Lot</mat-label>
+                    <input matInput>
+                    <mat-icon matSuffix *ngIf="isFirstIcon" (click)="changeIcon()">layers</mat-icon>
+                    <mat-icon matSuffix *ngIf="!isFirstIcon" matSuffix (click)="changeIcon()">crop_square</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+              </div>
             </div>
           </div>
         </mat-tab>

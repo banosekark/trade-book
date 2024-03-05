@@ -21,7 +21,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import {
+  MatNativeDateModule,
+  provideNativeDateAdapter,
+} from '@angular/material/core';
 import {
   MatSlideToggleChange,
   MatSlideToggleModule,
@@ -63,6 +66,7 @@ export interface User {
     MatRadioModule,
     CommonModule,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './trade-calculator.component.html',
   styleUrl: './trade-calculator.component.scss',
 })
@@ -71,6 +75,8 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   options: User[] = [{ name: 'Mary' }, { name: 'Shelley' }, { name: 'Igor' }];
   filteredOptions!: Observable<User[]>;
   tradeType: boolean = false;
+  public icon = 'close';
+  isFirstIcon = false;
 
   @ViewChild('tradeCalculator') tradeCalculator!: ElementRef;
 
@@ -107,5 +113,8 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     } else {
       this.tradeType = false;
     }
+  }
+  public changeIcon() {
+    this.isFirstIcon = !this.isFirstIcon;
   }
 }
