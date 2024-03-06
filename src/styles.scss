@@ -1,6 +1,6 @@
 @import "app/themes/styles/mixins";
 @import "app/themes/styles/theme";
-
+@import "app/themes/styles/gradients";
 // .mat-form-field {
 //   border-bottom: 0px;
 //   // background-color: transparent;
@@ -13,5 +13,11 @@
   box-sizing: border-box;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
