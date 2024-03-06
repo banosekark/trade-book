@@ -59,7 +59,17 @@ const NAMES: string[] = [
   styleUrl: './trade-info.component.scss',
 })
 export class TradeInfoComponent {
-  displayedColumns: string[] = ['id', 'name', 'progress', 'fruit'];
+  displayedColumns: string[] = [
+    'date',
+    'tradeType',
+    'strategy',
+    'entryPoint',
+    'sLPoint',
+    'target1',
+    'target2',
+    'tradeResult',
+    'rulesFollowed?',
+  ];
   dataSource: MatTableDataSource<UserData>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
