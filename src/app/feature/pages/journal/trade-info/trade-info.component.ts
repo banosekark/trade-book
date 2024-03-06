@@ -1,115 +1,219 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
+import { MatSort, MatSortModule, SortDirection } from '@angular/material/sort';
+import { merge, Observable, of as observableOf } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  fruit: string;
-}
-
-/** Constants used to fill up our data base. */
-const FRUITS: string[] = [
-  'blueberry',
-  'lychee',
-  'kiwi',
-  'mango',
-  'peach',
-  'lime',
-  'pomegranate',
-  'pineapple',
-];
-const NAMES: string[] = [
-  'Maia',
-  'Asher',
-  'Olivia',
-  'Atticus',
-  'Amelia',
-  'Jack',
-  'Charlotte',
-  'Theodore',
-  'Isla',
-  'Oliver',
-  'Isabella',
-  'Jasper',
-  'Cora',
-  'Levi',
-  'Violet',
-  'Arthur',
-  'Mia',
-  'Thomas',
-  'Elizabeth',
-];
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+//   {
+//     date: 1,
+//     tradeType: 'Hydrogen',
+//     strategy: 'Hydrogen',
+//     entryPoint: 1.0079,
+//     sLPoint: 1.0079,
+//     target1: 1.0079,
+//     target2: 1.0079,
+//     tradeResult: 'H',
+//     rulesFollowed: 'H',
+//   },
+// ];
 
 @Component({
   selector: 'app-trade-info',
   standalone: true,
   imports: [
-    MatFormFieldModule,
-    MatInputModule,
+    MatProgressSpinnerModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    DatePipe,
+    MatFormFieldModule,
   ],
   templateUrl: './trade-info.component.html',
   styleUrl: './trade-info.component.scss',
 })
 export class TradeInfoComponent {
-  displayedColumns: string[] = [
-    'date',
-    'tradeType',
-    'strategy',
-    'entryPoint',
-    'sLPoint',
-    'target1',
-    'target2',
-    'tradeResult',
-    'rulesFollowed?',
-  ];
-  dataSource: MatTableDataSource<UserData>;
+  displayedColumns: string[] = ['created', 'state', 'number', 'title'];
+  exampleDatabase!: ExampleHttpDatabase | null;
+  data: GithubIssue[] = [];
+
+  resultsLength = 0;
+  isLoadingResults = true;
+  isRateLimitReached = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor() {
-    // Create 100 users
-    const users = Array.from({ length: 100 }, (_, k) => createNewUser(k + 1));
-
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(users);
-  }
+  constructor(private _httpClient: HttpClient) {}
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
+    setTimeout(() => {
+      this.exampleDatabase = new ExampleHttpDatabase(this._httpClient);
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+      // If the user changes the sort order, reset back to the first page.
+      this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+      merge(this.sort.sortChange, this.paginator.page)
+        .pipe(
+          startWith({}),
+          switchMap(() => {
+            this.isLoadingResults = true;
+            return this.exampleDatabase!.getRepoIssues(
+              this.sort.active,
+              this.sort.direction,
+              this.paginator.pageIndex
+            ).pipe(catchError(() => observableOf(null)));
+          }),
+          map((data) => {
+            // Flip flag to show that loading has finished.
+            this.isLoadingResults = false;
+            this.isRateLimitReached = data === null;
+
+            if (data === null) {
+              return [];
+            }
+
+            // Only refresh the result length if there is new data. In case of rate
+            // limit errors, we do not want to reset the paginator to zero, as that
+            // would prevent users from re-triggering requests.
+            this.resultsLength = data.total_count;
+            return data.items;
+          })
+        )
+        .subscribe((data) => (this.data = data));
+    });
   }
 }
 
-/** Builds and returns a new User. */
-function createNewUser(id: number): UserData {
-  const name =
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))] +
-    ' ' +
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) +
-    '.';
+export interface GithubApi {
+  items: GithubIssue[];
+  total_count: number;
+}
 
-  return {
-    id: id.toString(),
-    name: name,
-    progress: Math.round(Math.random() * 100).toString(),
-    fruit: FRUITS[Math.round(Math.random() * (FRUITS.length - 1))],
-  };
+export interface GithubIssue {
+  created_at: string;
+  number: string;
+  state: string;
+  title: string;
+}
+
+/** An example database that the data source uses to retrieve data for the table. */
+export class ExampleHttpDatabase {
+  constructor(private _httpClient: HttpClient) {}
+
+  getRepoIssues(
+    sort: string,
+    order: SortDirection,
+    page: number
+  ): Observable<GithubApi> {
+    const href = 'https://api.github.com/search/issues';
+    const requestUrl = `${href}?q=repo:angular/components&sort=${sort}&order=${order}&page=${
+      page + 1
+    }`;
+
+    return this._httpClient.get<GithubApi>(requestUrl);
+  }
 }

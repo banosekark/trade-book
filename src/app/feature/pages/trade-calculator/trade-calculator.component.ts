@@ -36,7 +36,7 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { map, startWith } from 'rxjs/operators';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { BrowserModule } from '@angular/platform-browser';
+import { MatChipsModule } from '@angular/material/chips';
 
 export interface User {
   name: string;
@@ -65,6 +65,8 @@ export interface User {
     MatDividerModule,
     MatRadioModule,
     CommonModule,
+    MatChipsModule,
+    MatSelectModule,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './trade-calculator.component.html',
@@ -77,6 +79,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   tradeType: boolean = false;
   public icon = 'close';
   isFirstIcon = false;
+  selected = 'option2';
 
   @ViewChild('tradeCalculator') tradeCalculator!: ElementRef;
 
