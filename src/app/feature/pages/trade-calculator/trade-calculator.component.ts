@@ -34,7 +34,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { map, startWith } from 'rxjs/operators';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Observable } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
 
@@ -73,30 +79,57 @@ export interface User {
   styleUrl: './trade-calculator.component.scss',
 })
 export class TradeCalculatorComponent implements OnInit, AfterViewInit {
-  myControl = new FormControl<string | User>('');
   options: User[] = [{ name: 'Mary' }, { name: 'Shelley' }, { name: 'Igor' }];
   filteredOptions!: Observable<User[]>;
   tradeType: boolean = false;
   public icon = 'close';
   isFirstIcon = false;
   selected = 'option2';
+  tradeCalculatorForm!: FormGroup;
 
   @ViewChild('tradeCalculator') tradeCalculator!: ElementRef;
 
   constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
 
   ngOnInit() {
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map((value) => {
-        const name = typeof value === 'string' ? value : value?.name;
-        return name ? this._filter(name as string) : this.options.slice();
-      })
-    );
+    this.onTradeCalculatorForm();
+    this.filteredOptions = this.tradeCalculatorForm
+      .get('autoComplete')!
+      .valueChanges.pipe(
+        startWith(''),
+        map((value) => {
+          const name = typeof value === 'string' ? value : value?.name;
+          return name ? this._filter(name as string) : this.options.slice();
+        })
+      );
   }
 
   ngAfterViewInit(): void {
-    this.renderer.setAttribute(this.tradeCalculator, 'color', 'warn');
+    // this.renderer.setAttribute(this.tradeCalculator, 'color', 'warn');
+  }
+
+  onTradeCalculatorForm() {
+    this.tradeCalculatorForm = new FormGroup({
+      autoComplete: new FormControl<string | User>(''),
+      tradeType: new FormControl(''),
+      strategy: new FormControl(''),
+      tradeDate: new FormControl(''),
+      entryPoint: new FormControl(''),
+      slPoint: new FormControl(''),
+      stopLoss: new FormControl(''),
+      riskAmount: new FormControl(''),
+      rewardPossible: new FormControl(''),
+      quantity: new FormControl(''),
+      capitalRequired: new FormControl(''),
+      percentageOfCapital: new FormControl(''),
+      riskPerTrade: new FormControl(''),
+    });
+  }
+
+  // Submit Form
+
+  OnTradeCalculatorFormSubmitted() {
+    console.log(this.tradeCalculatorForm);
   }
 
   displayFn(user: User): string {
