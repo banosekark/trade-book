@@ -40,6 +40,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
@@ -110,13 +111,12 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
 
   onTradeCalculatorForm() {
     this.tradeCalculatorForm = new FormGroup({
-      autoComplete: new FormControl<string | User>(''),
-      tradeType: new FormControl(''),
+      autoComplete: new FormControl<string | User>('', Validators.required),
+      tradeType: new FormControl('', Validators.required),
       strategy: new FormControl(''),
-      tradeDate: new FormControl(''),
-      entryPoint: new FormControl(''),
-      slPoint: new FormControl(''),
-      stopLoss: new FormControl(''),
+      tradeDate: new FormControl('', Validators.required),
+      entry: new FormControl('', Validators.required),
+      stopLoss: new FormControl('', Validators.required),
       riskAmount: new FormControl(''),
       rewardPossible: new FormControl(''),
       quantity: new FormControl(''),

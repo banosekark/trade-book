@@ -28,12 +28,12 @@
                 </div>
                 <div class="col-sm-4">
                   <mat-form-field>
-                    <mat-label>Select an option</mat-label>
+                    <mat-label>Strategy Name</mat-label>
                     <mat-select [(value)]="selected" formControlName="strategy">
                       <mat-option>None</mat-option>
-                      <mat-option value="option1">Option 1</mat-option>
-                      <mat-option value="option2">Option 2</mat-option>
-                      <mat-option value="option3">Option 3</mat-option>
+                      <mat-option value="ftf">FTF</mat-option>
+                      <mat-option value="ema20">EMA 20</mat-option>
+                      <mat-option value="insideCandle">Inside Candle</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
@@ -54,7 +54,7 @@
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label>Entry</mat-label>
-                    <input matInput placeholder="Enter Price" formControlName="entryPoint">
+                    <input matInput placeholder="Enter Price" formControlName="entry">
                     <mat-hint>Hint</mat-hint>
                   </mat-form-field>
                 </div>
