@@ -49,7 +49,7 @@
 
 ::ng-deep
   .mdc-text-field--filled:not(.mdc-text-field--disabled)
-  .mdc-text-field__input {
+  .mdc-text-field__input.mat-mdc-autocomplete-trigger {
   color: #fff !important;
   border: 0;
 }

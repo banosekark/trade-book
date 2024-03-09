@@ -87,10 +87,23 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   isFirstIcon = false;
   selected = 'option2';
   tradeCalculatorForm!: FormGroup;
+  private _tradeCalculatorData: any;
+
+  public get tradeCalculatorData(): any {
+    return this._tradeCalculatorData;
+  }
+  public set tradeCalculatorData(value: any) {
+    this._tradeCalculatorData = value;
+  }
+  tradeDate = new FormControl(new Date());
 
   @ViewChild('tradeCalculator') tradeCalculator!: ElementRef;
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
+  constructor(
+    private renderer: Renderer2,
+    private elementRef: ElementRef,
+    private formBuilder: FormBuilder
+  ) {}
 
   ngOnInit() {
     this.onTradeCalculatorForm();
@@ -110,26 +123,29 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   onTradeCalculatorForm() {
-    this.tradeCalculatorForm = new FormGroup({
-      autoComplete: new FormControl<string | User>('', Validators.required),
-      tradeType: new FormControl('', Validators.required),
-      strategy: new FormControl(''),
-      tradeDate: new FormControl('', Validators.required),
-      entry: new FormControl('', Validators.required),
-      stopLoss: new FormControl('', Validators.required),
-      riskAmount: new FormControl(''),
-      rewardPossible: new FormControl(''),
-      quantity: new FormControl(''),
-      capitalRequired: new FormControl(''),
-      percentageOfCapital: new FormControl(''),
-      riskPerTrade: new FormControl(''),
+    this.tradeCalculatorForm = this.formBuilder.group({
+      autoComplete: ['', Validators.required],
+      tradeType: ['', Validators.required],
+      strategy: [''],
+      tradeDate: [new Date(), Validators.required],
+      entry: ['', Validators.required],
+      stopLoss: ['', Validators.required],
+      riskAmount: [''],
+      rewardPossible: [''],
+      quantity: [''],
+      capitalRequired: [''],
+      percentageOfCapital: [''],
+      riskPerTrade: [''],
     });
   }
 
   // Submit Form
 
+  tradeUserInputData: any;
+
   OnTradeCalculatorFormSubmitted() {
-    console.log(this.tradeCalculatorForm);
+    this.tradeUserInputData = this.tradeCalculatorForm.value;
+    console.log(this.tradeUserInputData);
   }
 
   displayFn(user: User): string {
