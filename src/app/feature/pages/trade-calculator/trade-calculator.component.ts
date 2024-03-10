@@ -74,6 +74,7 @@ export interface User {
     CommonModule,
     MatChipsModule,
     MatSelectModule,
+    FormsModule,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './trade-calculator.component.html',
@@ -128,7 +129,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
       tradeType: ['', Validators.required],
       strategy: [''],
       tradeDate: [new Date(), Validators.required],
-      entry: ['', Validators.required],
+      entry: ['', [Validators.required]],
       stopLoss: ['', Validators.required],
       riskAmount: [''],
       rewardPossible: [''],
@@ -160,13 +161,63 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   onChangeTradeType(event: MatSlideToggleChange) {
-    if (event.checked) {
-      this.tradeType = true;
-    } else {
-      this.tradeType = false;
-    }
+    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
+    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
+    this.tradeType = event.checked;
+    this.selected = this.tradeType ? 'Buy' : 'Sell';
+    this.validateEntryAndStopLoss({ entry, stopLoss });
   }
+
   public changeIcon() {
     this.isFirstIcon = !this.isFirstIcon;
+  }
+
+  calculateRiskAmount(): void {
+    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
+    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
+    this.validateEntryAndStopLoss({ entry, stopLoss });
+  }
+
+  private validateEntryAndStopLoss({
+    entry,
+    stopLoss,
+  }: {
+    entry: number;
+    stopLoss: number;
+  }) {
+    this.newMethod(entry, stopLoss);
+  }
+
+  private newMethod(entry: number, stopLoss: number) {
+    if (this.tradeType) {
+      this.newMethod_1(entry, stopLoss);
+    } else {
+      this.newMethod_2(stopLoss, entry);
+    }
+  }
+
+  private newMethod_2(stopLoss: number, entry: number) {
+    if (stopLoss < entry) {
+      this.tradeCalculatorForm.controls['riskAmount'].patchValue(null);
+      this.tradeCalculatorForm.controls['stopLoss'].setErrors({
+        invalid: true,
+      });
+    } else {
+      const riskAmount = stopLoss - entry;
+      this.tradeCalculatorForm.controls['riskAmount'].patchValue(riskAmount);
+      this.tradeCalculatorForm.controls['stopLoss'].setErrors(null);
+    }
+  }
+
+  private newMethod_1(entry: number, stopLoss: number) {
+    if (entry < stopLoss) {
+      this.tradeCalculatorForm.controls['riskAmount'].patchValue(null);
+      this.tradeCalculatorForm.controls['entry'].setErrors({ invalid: true });
+    } else {
+      const riskValue = Math.abs(entry - stopLoss);
+      console.log(riskValue);
+      this.tradeCalculatorForm.controls['riskAmount'].patchValue(riskValue);
+      this.tradeCalculatorForm.controls['entry'].setErrors(null);
+    }
   }
 }

@@ -23,8 +23,7 @@
 
                 <div class="col-sm-4">
                   <mat-slide-toggle formControlName="tradeType" color="primary" hideIcon
-                    (change)="onChangeTradeType($event)">Trade
-                    Type</mat-slide-toggle>
+                    (change)="onChangeTradeType($event)">{{ tradeType === true? 'Buy':'Sell'}}</mat-slide-toggle>
                 </div>
                 <div class="col-sm-4">
                   <mat-form-field>
@@ -54,15 +53,23 @@
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label>Entry</mat-label>
-                    <input type="number" matInput placeholder="Enter Price" formControlName="entry">
+                    <input type="number" matInput placeholder="Enter Price" min="0" formControlName="entry"
+                      (input)="calculateRiskAmount()">
                     <mat-hint>Hint</mat-hint>
+                    <mat-error *ngIf="tradeCalculatorForm?.get('entry')?.hasError('invalid')">
+                      Entry cannot be less than SL .
+                    </mat-error>
                   </mat-form-field>
                 </div>
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label>Stop Loss</mat-label>
-                    <input type="number" matInput placeholder="Enter Price" formControlName="stopLoss">
+                    <input type="number" matInput placeholder="Enter Price" formControlName="stopLoss"
+                      (input)="calculateRiskAmount()">
                     <mat-hint>Hint</mat-hint>
+                    <mat-error *ngIf="tradeCalculatorForm.get('stopLoss')?.hasError('invalid')">
+                      SL cannot be less than Entry.
+                    </mat-error>
                   </mat-form-field>
                 </div>
                 <div class="col-sm-4">
