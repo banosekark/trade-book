@@ -20,10 +20,17 @@
           <div class="tab-body">
             <div class="input-value">
               <div class="row">
-
+                <mat-slide-toggle formControlName="tradeType" color="primary" hideIcon
+                  (change)="onChangeTradeType($event)">{{ tradeType === true? 'Buy':'Sell'}}</mat-slide-toggle>
                 <div class="col-sm-4">
-                  <mat-slide-toggle formControlName="tradeType" color="primary" hideIcon
-                    (change)="onChangeTradeType($event)">{{ tradeType === true? 'Buy':'Sell'}}</mat-slide-toggle>
+                  <mat-form-field [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Total Capital</mat-label>
+                    <input type="number" matInput placeholder="Total Price" (input)="calculateAmount()"
+                      formControlName="totalCapital">
+                    <mat-hint>Hint</mat-hint>
+                    <mat-error>
+                    </mat-error>
+                  </mat-form-field>
                 </div>
                 <div class="col-sm-4">
                   <mat-form-field>
@@ -54,7 +61,7 @@
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label>Entry</mat-label>
                     <input type="number" matInput placeholder="Enter Price" min="0" formControlName="entry"
-                      (input)="calculateRiskAmount()">
+                      (input)="calculateAmount()">
                     <mat-hint>Hint</mat-hint>
                     <mat-error *ngIf="tradeCalculatorForm?.get('entry')?.hasError('invalid')">
                       Entry cannot be less than SL .
@@ -65,7 +72,7 @@
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label>Stop Loss</mat-label>
                     <input type="number" matInput placeholder="Enter Price" formControlName="stopLoss"
-                      (input)="calculateRiskAmount()">
+                      (input)="calculateAmount()">
                     <mat-hint>Hint</mat-hint>
                     <mat-error *ngIf="tradeCalculatorForm.get('stopLoss')?.hasError('invalid')">
                       SL cannot be less than Entry.
@@ -74,8 +81,13 @@
                 </div>
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                    <mat-label>Risk Amount</mat-label>
-                    <input type="number" matInput formControlName="riskAmount">
+                    <mat-label>{{isRiskPoint ? 'Risk Point' : 'Risk Amount'}}</mat-label>
+                    <input type="number" matInput formControlName="riskPoint" *ngIf="isRiskPoint"
+                      (input)="calculateAmount()">
+                    <input type="number" *ngIf="!isRiskPoint" matInput formControlName="riskAmount"
+                      (input)="calculateAmount()">
+                    <mat-icon matSuffix (click)="toggleRiskPointIcon()">{{isRiskPoint ? 'layers' :
+                      'crop_square'}}</mat-icon>
                     <mat-hint>Hint</mat-hint>
                   </mat-form-field>
                 </div>
@@ -86,30 +98,61 @@
           <div class=" tab-body">
             <div class="result-value">
               <div class="row">
+                <mat-radio-group formcontrolname="ratio" aria-label="Select an option" (change)="onChangeRatio($event)">
+                  <mat-radio-button value="2" checked>2:1</mat-radio-button>
+                  <mat-radio-button value="3">3:1</mat-radio-button>
+                </mat-radio-group>
                 <div class="col-sm-4">
-                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                    <mat-label>Reward Possible</mat-label>
-                    <input matInput type="number" formControlName="rewardPossible">
+                  <mat-form-field *ngIf="OptionFirstSelected" appearance="outline"
+                    [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Target Price 2:1</mat-label>
+                    <input matInput type="number" formControlName="targetPrice" (input)="calculateAmount()">
+                    <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                  <mat-form-field *ngIf="!OptionFirstSelected" appearance="outline"
+                    [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Target Price 3:1</mat-label>
+                    <input matInput type="number" formControlName="targetPrice3" (input)="calculateAmount()">
+                    <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class=" col-sm-4">
+                  <mat-form-field *ngIf="OptionFirstSelected" appearance="outline"
+                    [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Reward Possible 2:1</mat-label>
+                    <input matInput type="number" formControlName="rewardPossible" (input)="calculateAmount()">
+                    <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                  <mat-form-field *ngIf="!OptionFirstSelected" appearance="outline"
+                    [color]="tradeType? 'primary':'warn'">
+                    <mat-label>Reward Possible 3:1</mat-label>
+                    <input matInput type="number" formControlName="rewardPossible3" (input)="calculateAmount()">
                     <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
                     <mat-hint>Hint</mat-hint>
                   </mat-form-field>
                 </div>
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
+                    <mat-label>{{isQuantity ? 'Quantity' : 'Lot'}}</mat-label>
+                    <input matInput type="number" *ngIf="isQuantity" formControlName="quantity"
+                      (input)="calculateAmount()">
+                    <input matInput type="number" *ngIf="!isQuantity" formControlName="lot" (input)="calculateAmount()">
+                    <mat-icon matSuffix *ngIf=" isQuantity" (click)="toggleQuantityIcon()">layers</mat-icon>
+                    <mat-icon matSuffix *ngIf="!isQuantity" matSuffix
+                      (click)="toggleQuantityIcon()">crop_square</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                  </mat-form-field>
+                  <!-- <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label *ngIf="isFirstIcon">Quantity</mat-label>
                     <mat-label *ngIf="!isFirstIcon">Lot</mat-label>
-                    <input matInput type="number" formControlName="quantity">
+                    <input matInput type="number" formControlName="noOfShare">
                     <mat-icon matSuffix *ngIf="isFirstIcon" (click)="changeIcon()">layers</mat-icon>
                     <mat-icon matSuffix *ngIf="!isFirstIcon" matSuffix (click)="changeIcon()">crop_square</mat-icon>
                     <mat-hint>Hint</mat-hint>
-                  </mat-form-field>
-                </div>
-                <div class="col-sm-4">
-                  <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                    <mat-label>Capital Required</mat-label>
-                    <input matInput type="number" formControlName="capitalRequired">
-                    <mat-hint>Hint</mat-hint>
-                  </mat-form-field>
+                  </mat-form-field> -->
                 </div>
               </div>
             </div>
@@ -133,11 +176,8 @@
                 </div>
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                    <mat-label *ngIf="isFirstIcon">Quantity</mat-label>
-                    <mat-label *ngIf="!isFirstIcon">Lot</mat-label>
-                    <input matInput type="number">
-                    <mat-icon matSuffix *ngIf="isFirstIcon" (click)="changeIcon()">layers</mat-icon>
-                    <mat-icon matSuffix *ngIf="!isFirstIcon" matSuffix (click)="changeIcon()">crop_square</mat-icon>
+                    <mat-label>Capital Required</mat-label>
+                    <input matInput type="number" formControlName="capitalRequired">
                     <mat-hint>Hint</mat-hint>
                   </mat-form-field>
                 </div>
