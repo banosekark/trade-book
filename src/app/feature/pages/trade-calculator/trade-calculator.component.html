@@ -15,7 +15,7 @@
     <!-- header end-->
     <mat-dialog-content>
       <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight>
-        <mat-tab label="First">
+        <mat-tab label="Intraday">
           <mat-divider></mat-divider>
           <div class="tab-body">
             <div class="input-value">
@@ -145,14 +145,6 @@
                       (click)="toggleQuantityIcon()">crop_square</mat-icon>
                     <mat-hint>Hint</mat-hint>
                   </mat-form-field>
-                  <!-- <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
-                    <mat-label *ngIf="isFirstIcon">Quantity</mat-label>
-                    <mat-label *ngIf="!isFirstIcon">Lot</mat-label>
-                    <input matInput type="number" formControlName="noOfShare">
-                    <mat-icon matSuffix *ngIf="isFirstIcon" (click)="changeIcon()">layers</mat-icon>
-                    <mat-icon matSuffix *ngIf="!isFirstIcon" matSuffix (click)="changeIcon()">crop_square</mat-icon>
-                    <mat-hint>Hint</mat-hint>
-                  </mat-form-field> -->
                 </div>
               </div>
             </div>
@@ -177,7 +169,7 @@
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label>Capital Required</mat-label>
-                    <input matInput type="number" formControlName="capitalRequired">
+                    <input matInput type="number" formControlName="capitalRequired" (input)="calculateAmount()">
                     <mat-hint>Hint</mat-hint>
                   </mat-form-field>
                 </div>
@@ -185,7 +177,7 @@
             </div>
           </div>
         </mat-tab>
-        <mat-tab label="Second">
+        <mat-tab label=" Second">
           <mat-divider></mat-divider>
         </mat-tab>
         <mat-tab label="Third">

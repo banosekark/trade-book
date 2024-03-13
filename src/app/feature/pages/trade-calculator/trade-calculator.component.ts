@@ -132,8 +132,8 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
       tradeType: ['', Validators.required],
       strategy: [''],
       tradeDate: [new Date(), Validators.required],
-      entry: ['', [Validators.required]],
-      stopLoss: ['', Validators.required],
+      entry: ['455.95', [Validators.required]],
+      stopLoss: ['458.8', Validators.required],
       ratio: ['2', [Validators.required]],
       riskPoint: [''],
       riskAmount: [''],
@@ -183,7 +183,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
     const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
     this.validateEntryAndStopLoss({ entry, stopLoss });
-    // this.calculateNoOfShares();
+    this.capitalRequired();
   }
 
   private validateEntryAndStopLoss({
@@ -258,6 +258,8 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   calculateRiskPoint(entry: number, stopLoss: number) {
     const riskValue = Math.abs(entry - stopLoss).toFixed(2);
     this.tradeCalculatorForm.controls['riskPoint'].patchValue(riskValue);
+    this.calculateTargetPrice(entry, Number(riskValue)); // Convert riskValue to a number
+    this.calculateRewardPossible();
   }
   calculateRiskAmount() {
     const qtyOfShares =
@@ -270,54 +272,62 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   onChangeRatio(event: any) {
+    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
+    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
     console.log(event.value);
     event.value === '2'
       ? (this.OptionFirstSelected = true)
       : (this.OptionFirstSelected = false);
+    this.calculateRiskPoint(entry, stopLoss);
   }
 
   calculateTargetPrice(entry: number, riskValue: number) {
     if (this.OptionFirstSelected) {
       const targetPrice = entry - riskValue * 2;
-      this.tradeCalculatorForm.controls['targetPrice'].patchValue(targetPrice);
+      this.tradeCalculatorForm.controls['targetPrice'].setValue(targetPrice);
     } else {
       const targetPrice = entry - riskValue * 3;
-      this.tradeCalculatorForm.controls['targetPrice3'].patchValue(targetPrice);
+      this.tradeCalculatorForm.controls['targetPrice3'].setValue(targetPrice);
     }
   }
 
   calculateRewardPossible() {
     const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
+    const riskAmount =
+      this.tradeCalculatorForm.controls['riskAmount'].value || 0;
     const targetPrice =
       this.tradeCalculatorForm.controls['targetPrice'].value || 0;
     const targetPrice3 =
       this.tradeCalculatorForm.controls['targetPrice3'].value || 0;
     this.OptionFirstSelected
-      ? this.onRewardPossibleMethod(entry, targetPrice)
-      : this.onRewardPossibleMethod(entry, targetPrice3);
+      ? this.onRewardPossibleMethod(entry, riskAmount, targetPrice)
+      : this.onRewardPossibleMethod(entry, riskAmount, targetPrice3);
   }
 
-  private calculatePercentageOfCapital() {
-    // Add your implementation here
-    // Calculate the percentage of capital based on the quantity and other factors
-    const quantity = this.tradeCalculatorForm.controls['quantity'].value || 0;
-    const capitalRequired =
-      this.tradeCalculatorForm.controls['capitalRequired'].value || 0;
-    const percentageOfCapital = (quantity / capitalRequired) * 100;
-    this.tradeCalculatorForm.controls['percentageOfCapital'].patchValue(
-      percentageOfCapital
+  private onRewardPossibleMethod(
+    entry: number,
+    riskAmount: number,
+    targetPrice: number
+  ) {
+    console.log(entry, riskAmount, targetPrice);
+    const rewardPossible = riskAmount * 2;
+    this.tradeCalculatorForm.controls['rewardPossible'].patchValue(
+      rewardPossible
     );
 
-    this.calculateRiskPerTrade();
+    const rewardPossible3 = riskAmount * 3;
+    this.tradeCalculatorForm.controls['rewardPossible3'].patchValue(
+      rewardPossible3
+    );
   }
 
   private calculateRiskPerTrade() {
     // Add your implementation here
     // Calculate the risk per trade based on the capital required and other factors
-    const capitalRequired =
-      this.tradeCalculatorForm.controls['capitalRequired'].value || 0;
+    const totalCapital =
+      this.tradeCalculatorForm.controls['totalCapital'].value || 0;
     const quantity = this.tradeCalculatorForm.controls['quantity'].value || 0;
-    const riskPerTrade = capitalRequired / quantity;
+    const riskPerTrade = totalCapital * 0.005;
     this.tradeCalculatorForm.controls['riskPerTrade'].patchValue(riskPerTrade);
   }
 
@@ -334,19 +344,33 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
 
     this.tradeCalculatorForm.controls['quantity'].patchValue(noOfShares);
   }
-
   calculateNoOfSharesForLot() {}
 
-  private onRewardPossibleMethod(entry: number, targetPrice: number) {
+  capitalRequired() {
+    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
+    const quantity = this.tradeCalculatorForm.controls['quantity'].value || 0;
+    const capitalRequired = Math.round(quantity * (entry / 5));
+    this.tradeCalculatorForm.controls['capitalRequired'].patchValue(
+      capitalRequired
+    );
+    this.calculatePercentageOfCapital();
+  }
+
+  private calculatePercentageOfCapital() {
     // Add your implementation here
-    const rewardPossible = targetPrice - entry;
-    this.tradeCalculatorForm.controls['rewardPossible'].patchValue(
-      rewardPossible
+    // Calculate the percentage of capital based on the quantity and other factors
+    const totalCapital =
+      this.tradeCalculatorForm.controls['totalCapital'].value || 0;
+    const capitalRequired =
+      this.tradeCalculatorForm.controls['capitalRequired'].value || 0;
+    const percentageOfCapital = (
+      (capitalRequired / totalCapital) *
+      100
+    ).toFixed(2);
+    this.tradeCalculatorForm.controls['percentageOfCapital'].patchValue(
+      percentageOfCapital
     );
 
-    const rewardPossible3 = targetPrice - entry;
-    this.tradeCalculatorForm.controls['rewardPossible3'].patchValue(
-      rewardPossible3
-    );
+    this.calculateRiskPerTrade();
   }
 }
