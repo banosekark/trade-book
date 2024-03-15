@@ -44,6 +44,7 @@ import {
 } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
+import { Strategy } from '../../models/strategy.model';
 
 export interface User {
   name: string;
@@ -82,7 +83,28 @@ export interface User {
 })
 export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   options: User[] = [{ name: 'Mary' }, { name: 'Shelley' }, { name: 'Igor' }];
+  strategy_options: Strategy[] = [
+    { name: 'Support & Resistance' },
+    { name: 'Triangle Pattern' },
+    { name: 'Trendline' },
+    { name: 'Triangle Pattern' },
+    { name: 'Channel Pattern' },
+    { name: 'Rectangle Formation' },
+    { name: 'Double Top' },
+    { name: 'Double Bottom' },
+    { name: 'Triple Top' },
+    { name: 'Triple Bottom' },
+    { name: 'Head & Shoulder' },
+    { name: 'Pole Pattern' },
+    { name: 'Breakout' },
+    { name: 'Inside Candle' },
+    { name: 'Follow the Footprints' },
+    { name: 'Pro-Gap' },
+    { name: 'EMA 8/20' },
+    { name: 'Top Down Approach' },
+  ];
   filteredOptions!: Observable<User[]>;
+  strategyOptions!: Observable<Strategy[]>;
   tradeType: boolean = false;
   public icon = 'close';
   selected = 'option2';
@@ -119,6 +141,18 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
           return name ? this._filter(name as string) : this.options.slice();
         })
       );
+
+    this.strategyOptions = this.tradeCalculatorForm
+      .get('strategy')!
+      .valueChanges.pipe(
+        startWith(''),
+        map((value) => {
+          const name = typeof value === 'string' ? value : value?.name;
+          return name
+            ? this._filter(name as string)
+            : this.strategy_options.slice();
+        })
+      );
   }
 
   ngAfterViewInit(): void {
@@ -132,8 +166,8 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
       tradeType: ['', Validators.required],
       strategy: [''],
       tradeDate: [new Date(), Validators.required],
-      entry: ['455.95', [Validators.required]],
-      stopLoss: ['458.8', Validators.required],
+      entry: ['', [Validators.required]],
+      stopLoss: ['', Validators.required],
       ratio: ['2', [Validators.required]],
       riskPoint: [''],
       riskAmount: [''],
@@ -149,7 +183,122 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Submit Form
+  // get tradeCalculatorForm controls for easy access
+  get tradeCalculatorFormControls() {
+    return this.tradeCalculatorForm.controls;
+  }
+
+  // get tradeCalculatorForm value for easy access
+  get tradeCalculatorFormValue() {
+    return this.tradeCalculatorForm.value;
+  }
+
+  // get tradeCalculatorForm valid for easy access
+  get tradeCalculatorFormValid() {
+    return this.tradeCalculatorForm.valid;
+  }
+
+  // get tradeCalculatorForm invalid for easy access
+  get tradeCalculatorFormInvalid() {
+    return this.tradeCalculatorForm.invalid;
+  }
+
+  // get autoComplete controls value for easy access
+  get autoComplete() {
+    return this.tradeCalculatorForm.controls['autoComplete'].value;
+  }
+
+  // get totalCapital controls value for easy access
+  get totalCapital() {
+    return this.tradeCalculatorForm.controls['totalCapital'].value;
+  }
+
+  // get tradeType controls value for easy access
+  get tradeTypeValue() {
+    return this.tradeCalculatorForm.controls['tradeType'].value;
+  }
+
+  // get strategy controls value for easy access
+  get strategy() {
+    return this.tradeCalculatorForm.controls['strategy'].value;
+  }
+
+  // get tradeDate controls value for easy access
+  get tradeDateValue() {
+    return this.tradeCalculatorForm.controls['tradeDate'].value;
+  }
+
+  // get entry controls value for easy access
+  get entry() {
+    return this.tradeCalculatorForm.controls['entry'].value;
+  }
+
+  // get stopLoss controls value for easy access
+
+  get stopLoss() {
+    return this.tradeCalculatorForm.controls['stopLoss'].value;
+  }
+
+  // get ratio controls value for easy access
+  get ratio() {
+    return this.tradeCalculatorForm.controls['ratio'].value;
+  }
+
+  // get riskPoint controls value for easy access
+
+  get riskPoint() {
+    return this.tradeCalculatorForm.controls['riskPoint'].value;
+  }
+
+  // get riskAmount controls value for easy access
+  get riskAmount() {
+    return this.tradeCalculatorForm.controls['riskAmount'].value;
+  }
+
+  // get targetPrice controls value for easy access
+  get targetPrice() {
+    return this.tradeCalculatorForm.controls['targetPrice'].value;
+  }
+
+  // get targetPrice3 controls value for easy access
+  get targetPrice3() {
+    return this.tradeCalculatorForm.controls['targetPrice3'].value;
+  }
+
+  // get rewardPossible controls value for easy access
+  get rewardPossible() {
+    return this.tradeCalculatorForm.controls['rewardPossible'].value;
+  }
+
+  // get rewardPossible3 controls value for easy access
+  get rewardPossible3() {
+    return this.tradeCalculatorForm.controls['rewardPossible3'].value;
+  }
+
+  // get quantity controls value for easy access
+  get quantity() {
+    return this.tradeCalculatorForm.controls['quantity'].value;
+  }
+
+  // get lot controls value for easy access
+  get lot() {
+    return this.tradeCalculatorForm.controls['lot'].value;
+  }
+
+  // get capitalRequired controls value for easy access
+  get capitalRequiredValue() {
+    return this.tradeCalculatorForm.controls['capitalRequired'].value;
+  }
+
+  // get percentageOfCapital controls value for easy access
+  get percentageOfCapital() {
+    return this.tradeCalculatorForm.controls['percentageOfCapital'].value;
+  }
+
+  // get riskPerTrade controls value for easy access
+  get riskPerTrade() {
+    return this.tradeCalculatorForm.controls['riskPerTrade'].value;
+  }
 
   tradeUserInputData: any;
 
@@ -170,33 +319,18 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   onChangeTradeType(event: MatSlideToggleChange) {
-    // reset control values
-    this.tradeCalculatorForm.controls['entry'].patchValue(null);
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
     this.tradeType = event.checked;
     this.selected = this.tradeType ? 'Buy' : 'Sell';
-    this.validateEntryAndStopLoss({ entry, stopLoss });
+    this.validateEntryAndStopLoss();
   }
 
   calculateAmount(): void {
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
-    this.validateEntryAndStopLoss({ entry, stopLoss });
+    this.validateEntryAndStopLoss();
     this.capitalRequired();
   }
 
-  private validateEntryAndStopLoss({
-    entry,
-    stopLoss,
-  }: {
-    entry: number;
-    stopLoss: number;
-  }) {
-    this.onEntrySLMethod(entry, stopLoss);
-  }
-
-  private onEntrySLMethod(entry: number, stopLoss: number) {
+  private validateEntryAndStopLoss() {
+    const { entry, stopLoss } = this.tradeCalculatorFormValue;
     if (this.tradeType) {
       this.onEntryIsGraterThanSL(entry, stopLoss);
     } else {
@@ -205,103 +339,100 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   private onSLIsGraterThanEntry(stopLoss: number, entry: number) {
-    let riskValue: number; // Declare the riskValue variable
     if (stopLoss < entry) {
-      this.tradeCalculatorForm.controls['riskPoint'].patchValue(null);
-      this.tradeCalculatorForm.controls['stopLoss'].setErrors({
+      this.tradeCalculatorFormControls['riskPoint'].patchValue(null);
+      this.tradeCalculatorFormControls['stopLoss'].setErrors({
         invalid: true,
       });
     } else {
-      this.isRiskPoint
-        ? this.calculateRiskPoint(entry, stopLoss)
-        : this.calculateRiskAmount();
-      this.isQuantity
-        ? this.calculateNoOfShares()
-        : this.calculateNoOfSharesForLot;
-      this.tradeCalculatorForm.controls['stopLoss'].setErrors(null);
-      this.tradeCalculatorForm.controls['entry'].setErrors(null);
+      if (this.isRiskPoint) {
+        this.calculateRiskPoint(entry, stopLoss);
+      } else {
+        this.calculateRiskAmount();
+      }
+      if (this.isQuantity) {
+        this.calculateNoOfShares();
+      } else {
+        this.calculateNoOfSharesForLot();
+      }
+      this.tradeCalculatorFormControls['stopLoss'].setErrors(null);
+      this.tradeCalculatorFormControls['entry'].setErrors(null);
       // this.calculateTargetPrice(entry, riskValue);
     }
   }
 
   private onEntryIsGraterThanSL(entry: number, stopLoss: number) {
     if (entry < stopLoss) {
-      this.tradeCalculatorForm.controls['riskPoint'].patchValue(null);
-      this.tradeCalculatorForm.controls['entry'].setErrors({ invalid: true });
+      this.tradeCalculatorFormControls['riskPoint'].patchValue(null);
+      this.tradeCalculatorFormControls['entry'].setErrors({ invalid: true });
     } else {
-      this.isRiskPoint
-        ? this.calculateRiskPoint(entry, stopLoss)
-        : this.calculateRiskAmount();
-      this.isQuantity
-        ? this.calculateNoOfShares()
-        : this.calculateNoOfSharesForLot;
-      this.tradeCalculatorForm.controls['stopLoss'].setErrors(null);
-      this.tradeCalculatorForm.controls['entry'].setErrors(null);
+      if (this.isRiskPoint) {
+        this.calculateRiskPoint(entry, stopLoss);
+      } else {
+        this.calculateRiskAmount();
+      }
+      if (this.isQuantity) {
+        this.calculateNoOfShares();
+      } else {
+        this.calculateNoOfSharesForLot();
+      }
+      this.tradeCalculatorFormControls['stopLoss'].setErrors(null);
+      this.tradeCalculatorFormControls['entry'].setErrors(null);
       // this.calculateTargetPrice(entry, riskValue);
     }
   }
 
   toggleRiskPointIcon() {
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
-    this.validateEntryAndStopLoss({ entry, stopLoss });
+    this.validateEntryAndStopLoss();
     this.isRiskPoint = !this.isRiskPoint;
   }
   toggleQuantityIcon() {
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
-    this.validateEntryAndStopLoss({ entry, stopLoss });
+    this.validateEntryAndStopLoss();
 
     this.isQuantity = !this.isQuantity;
   }
 
   calculateRiskPoint(entry: number, stopLoss: number) {
     const riskValue = Math.abs(entry - stopLoss).toFixed(2);
-    this.tradeCalculatorForm.controls['riskPoint'].patchValue(riskValue);
+    this.tradeCalculatorFormControls['riskPoint'].patchValue(riskValue);
     this.calculateTargetPrice(entry, Number(riskValue)); // Convert riskValue to a number
     this.calculateRewardPossible();
   }
   calculateRiskAmount() {
-    const qtyOfShares =
-      this.tradeCalculatorForm.controls['quantity'].value || 0;
-    const riskPoints =
-      this.tradeCalculatorForm.controls['riskPoint'].value || 0;
-
-    const riskAmount = qtyOfShares * riskPoints;
-    this.tradeCalculatorForm.controls['riskAmount'].setValue(riskAmount);
+    const riskAmount = this.quantity * this.riskPoint;
+    this.tradeCalculatorFormControls['riskAmount'].setValue(riskAmount);
   }
 
   onChangeRatio(event: any) {
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const stopLoss = this.tradeCalculatorForm.controls['stopLoss'].value || 0;
     console.log(event.value);
     event.value === '2'
       ? (this.OptionFirstSelected = true)
       : (this.OptionFirstSelected = false);
-    this.calculateRiskPoint(entry, stopLoss);
+    this.calculateRiskPoint(this.entry, this.stopLoss);
   }
 
   calculateTargetPrice(entry: number, riskValue: number) {
     if (this.OptionFirstSelected) {
       const targetPrice = entry - riskValue * 2;
-      this.tradeCalculatorForm.controls['targetPrice'].setValue(targetPrice);
+      this.tradeCalculatorFormControls['targetPrice'].setValue(targetPrice);
     } else {
       const targetPrice = entry - riskValue * 3;
-      this.tradeCalculatorForm.controls['targetPrice3'].setValue(targetPrice);
+      this.tradeCalculatorFormControls['targetPrice3'].setValue(targetPrice);
     }
   }
 
   calculateRewardPossible() {
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const riskAmount =
-      this.tradeCalculatorForm.controls['riskAmount'].value || 0;
-    const targetPrice =
-      this.tradeCalculatorForm.controls['targetPrice'].value || 0;
-    const targetPrice3 =
-      this.tradeCalculatorForm.controls['targetPrice3'].value || 0;
     this.OptionFirstSelected
-      ? this.onRewardPossibleMethod(entry, riskAmount, targetPrice)
-      : this.onRewardPossibleMethod(entry, riskAmount, targetPrice3);
+      ? this.onRewardPossibleMethod(
+          this.entry,
+          this.riskAmount,
+          this.targetPrice
+        )
+      : this.onRewardPossibleMethod(
+          this.entry,
+          this.riskAmount,
+          this.targetPrice3
+        );
   }
 
   private onRewardPossibleMethod(
@@ -311,12 +442,12 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   ) {
     console.log(entry, riskAmount, targetPrice);
     const rewardPossible = riskAmount * 2;
-    this.tradeCalculatorForm.controls['rewardPossible'].patchValue(
+    this.tradeCalculatorFormControls['rewardPossible'].patchValue(
       rewardPossible
     );
 
     const rewardPossible3 = riskAmount * 3;
-    this.tradeCalculatorForm.controls['rewardPossible3'].patchValue(
+    this.tradeCalculatorFormControls['rewardPossible3'].patchValue(
       rewardPossible3
     );
   }
@@ -324,33 +455,23 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   private calculateRiskPerTrade() {
     // Add your implementation here
     // Calculate the risk per trade based on the capital required and other factors
-    const totalCapital =
-      this.tradeCalculatorForm.controls['totalCapital'].value || 0;
-    const quantity = this.tradeCalculatorForm.controls['quantity'].value || 0;
-    const riskPerTrade = totalCapital * 0.005;
-    this.tradeCalculatorForm.controls['riskPerTrade'].patchValue(riskPerTrade);
+    const riskPerTrade = this.totalCapital * 0.005;
+    this.tradeCalculatorFormControls['riskPerTrade'].patchValue(riskPerTrade);
   }
 
   calculateNoOfShares() {
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const totalCapital =
-      this.tradeCalculatorForm.controls['totalCapital'].value || 0;
-    const riskPoint = this.tradeCalculatorForm.controls['riskPoint'].value || 0;
-
     const noOfShares = Math.min(
-      Math.round((totalCapital * 0.005) / riskPoint),
-      Math.round((totalCapital * 2.5) / entry)
+      Math.round((this.totalCapital * 0.005) / this.riskPoint),
+      Math.round((this.totalCapital * 2.5) / this.entry)
     );
 
-    this.tradeCalculatorForm.controls['quantity'].patchValue(noOfShares);
+    this.tradeCalculatorFormControls['quantity'].patchValue(noOfShares);
   }
   calculateNoOfSharesForLot() {}
 
   capitalRequired() {
-    const entry = this.tradeCalculatorForm.controls['entry'].value || 0;
-    const quantity = this.tradeCalculatorForm.controls['quantity'].value || 0;
-    const capitalRequired = Math.round(quantity * (entry / 5));
-    this.tradeCalculatorForm.controls['capitalRequired'].patchValue(
+    const capitalRequired = Math.round(this.quantity * (this.entry / 5));
+    this.tradeCalculatorFormControls['capitalRequired'].patchValue(
       capitalRequired
     );
     this.calculatePercentageOfCapital();
@@ -359,15 +480,12 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   private calculatePercentageOfCapital() {
     // Add your implementation here
     // Calculate the percentage of capital based on the quantity and other factors
-    const totalCapital =
-      this.tradeCalculatorForm.controls['totalCapital'].value || 0;
-    const capitalRequired =
-      this.tradeCalculatorForm.controls['capitalRequired'].value || 0;
+
     const percentageOfCapital = (
-      (capitalRequired / totalCapital) *
+      (this.capitalRequiredValue / this.totalCapital) *
       100
     ).toFixed(2);
-    this.tradeCalculatorForm.controls['percentageOfCapital'].patchValue(
+    this.tradeCalculatorFormControls['percentageOfCapital'].patchValue(
       percentageOfCapital
     );
 

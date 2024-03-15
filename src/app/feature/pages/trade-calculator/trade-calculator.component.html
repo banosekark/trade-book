@@ -2,7 +2,8 @@
   <form [formGroup]="tradeCalculatorForm" (ngSubmit)="OnTradeCalculatorFormSubmitted()">
     <!--header start -->
     <div class="header" [ngClass]="tradeType ? 'bg-primary' : 'bg-warn'">
-      <mat-form-field class="search-field" color="primary">
+      <h1 class="py-3">Plan Trade</h1>
+      <!-- <mat-form-field class="search-field" color="primary">
         <mat-icon matPrefix>search</mat-icon>
         <input matInput formControlName="autoComplete" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" class="autocomplete-pane">
@@ -10,7 +11,11 @@
           <mat-option [value]="option">{{option.name}}</mat-option>
           }
         </mat-autocomplete>
-      </mat-form-field>
+        <mat-error
+          *ngIf="tradeCalculatorForm.get('autoComplete')?.invalid || tradeCalculatorForm.get('autoComplete')?.touched">
+          Please Select Stock Name
+        </mat-error>
+      </mat-form-field> -->
     </div>
     <!-- header end-->
     <mat-dialog-content>
@@ -20,29 +25,20 @@
           <div class="tab-body">
             <div class="input-value">
               <div class="row">
-                <mat-slide-toggle formControlName="tradeType" color="primary" hideIcon
-                  (change)="onChangeTradeType($event)">{{ tradeType === true? 'Buy':'Sell'}}</mat-slide-toggle>
+
                 <div class="col-sm-4">
                   <mat-form-field [color]="tradeType? 'primary':'warn'">
                     <mat-label>Total Capital</mat-label>
                     <input type="number" matInput placeholder="Total Price" (input)="calculateAmount()"
                       formControlName="totalCapital">
                     <mat-hint>Hint</mat-hint>
-                    <mat-error>
+                    <mat-error *ngIf="tradeCalculatorForm.get('totalCapital')?.invalid">
+                      Please Select Total Capital
                     </mat-error>
                   </mat-form-field>
+
                 </div>
-                <div class="col-sm-4">
-                  <mat-form-field>
-                    <mat-label>Strategy Name</mat-label>
-                    <mat-select [(value)]="selected" formControlName="strategy">
-                      <mat-option>None</mat-option>
-                      <mat-option value="ftf">FTF</mat-option>
-                      <mat-option value="ema20">EMA 20</mat-option>
-                      <mat-option value="insideCandle">Inside Candle</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
+
                 <div class="col-sm-4">
                   <mat-form-field>
                     <mat-label>Choose a date</mat-label>
@@ -50,6 +46,41 @@
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
+                    <mat-error
+                      *ngIf="tradeCalculatorForm.get('tradeDate')?.invalid && tradeCalculatorForm.get('tradeDate')?.touched">
+                      Please Select Trade Date
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-slide-toggle class="float-end" formControlName="tradeType" color="primary" hideIcon
+                    (change)="onChangeTradeType($event)">{{ tradeType === true? 'Buy':'Sell'}}</mat-slide-toggle>
+
+                </div>
+                <div class="col-sm-8">
+                  <mat-form-field class="search-field" color="primary">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput formControlName="autoComplete" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" class="autocomplete-pane">
+                      @for (option of filteredOptions | async; track option) {
+                      <mat-option [value]="option">{{option.name}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                    <mat-error
+                      *ngIf="tradeCalculatorForm.get('autoComplete')?.invalid || tradeCalculatorForm.get('autoComplete')?.touched">
+                      Please Select Stock Name
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-label>Strategy Name</mat-label>
+                    <mat-select [(value)]="selected" formControlName="strategy">
+                      @for (strategy_options of strategyOptions | async; track strategy_options) {
+                      <mat-option [value]="strategy_options">{{strategy_options.name}}</mat-option>
+                      }
+
+                    </mat-select>
                   </mat-form-field>
                 </div>
               </div>
@@ -60,11 +91,15 @@
                 <div class="col-sm-4">
                   <mat-form-field appearance="outline" [color]="tradeType? 'primary':'warn'">
                     <mat-label>Entry</mat-label>
-                    <input type="number" matInput placeholder="Enter Price" min="0" formControlName="entry"
+                    <input type="number" matInput placeholder="Enter Price"
+                      [disabled]="tradeCalculatorForm.get('autoComplete')?.invalid ?? false" formControlName="entry"
                       (input)="calculateAmount()">
                     <mat-hint>Hint</mat-hint>
                     <mat-error *ngIf="tradeCalculatorForm?.get('entry')?.hasError('invalid')">
                       Entry cannot be less than SL .
+                    </mat-error>
+                    <mat-error *ngIf=" tradeCalculatorForm.get('autoComplete')?.invalid">
+                      First Solve errors
                     </mat-error>
                   </mat-form-field>
                 </div>
