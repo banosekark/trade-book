@@ -45,6 +45,7 @@ import {
 import { Observable } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
 import { Strategy } from '../../models/strategy.model';
+import { IntraDayService } from '../../services/intraday.service';
 
 export interface User {
   name: string;
@@ -127,7 +128,8 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   constructor(
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private intraDayService: IntraDayService
   ) {}
 
   ngOnInit() {
@@ -384,6 +386,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
 
   toggleRiskPointIcon() {
     this.validateEntryAndStopLoss();
+    this.calculateRiskAmount();
     this.isRiskPoint = !this.isRiskPoint;
   }
   toggleQuantityIcon() {
@@ -393,13 +396,16 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   calculateRiskPoint(entry: number, stopLoss: number) {
-    const riskValue = Math.abs(entry - stopLoss).toFixed(2);
+    const riskValue = this.intraDayService.getRiskPoint(entry, stopLoss);
     this.tradeCalculatorFormControls['riskPoint'].patchValue(riskValue);
     this.calculateTargetPrice(entry, Number(riskValue)); // Convert riskValue to a number
     this.calculateRewardPossible();
   }
   calculateRiskAmount() {
-    const riskAmount = this.quantity * this.riskPoint;
+    const riskAmount = this.intraDayService.getRiskAmount(
+      this.quantity,
+      this.riskPoint
+    );
     this.tradeCalculatorFormControls['riskAmount'].setValue(riskAmount);
   }
 
@@ -412,11 +418,19 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   calculateTargetPrice(entry: number, riskValue: number) {
+    this.calculateRiskAmount();
+
     if (this.OptionFirstSelected) {
-      const targetPrice = entry - riskValue * 2;
+      const targetPrice = this.intraDayService.getTargetPrice(
+        entry,
+        riskValue
+      )[0];
       this.tradeCalculatorFormControls['targetPrice'].setValue(targetPrice);
     } else {
-      const targetPrice = entry - riskValue * 3;
+      const targetPrice = this.intraDayService.getTargetPrice(
+        entry,
+        riskValue
+      )[1];
       this.tradeCalculatorFormControls['targetPrice3'].setValue(targetPrice);
     }
   }
@@ -440,29 +454,35 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     riskAmount: number,
     targetPrice: number
   ) {
-    console.log(entry, riskAmount, targetPrice);
-    const rewardPossible = riskAmount * 2;
+    const rewardPossible = this.intraDayService.getRewardPossible(
+      entry,
+      riskAmount
+    )[0];
     this.tradeCalculatorFormControls['rewardPossible'].patchValue(
       rewardPossible
     );
 
-    const rewardPossible3 = riskAmount * 3;
+    const rewardPossible3 = this.intraDayService.getRewardPossible(
+      entry,
+      riskAmount
+    )[1];
     this.tradeCalculatorFormControls['rewardPossible3'].patchValue(
       rewardPossible3
     );
   }
 
   private calculateRiskPerTrade() {
-    // Add your implementation here
-    // Calculate the risk per trade based on the capital required and other factors
-    const riskPerTrade = this.totalCapital * 0.005;
+    const riskPerTrade = this.intraDayService.getRiskPerTrade(
+      this.totalCapital
+    );
     this.tradeCalculatorFormControls['riskPerTrade'].patchValue(riskPerTrade);
   }
 
   calculateNoOfShares() {
-    const noOfShares = Math.min(
-      Math.round((this.totalCapital * 0.005) / this.riskPoint),
-      Math.round((this.totalCapital * 2.5) / this.entry)
+    const noOfShares = this.intraDayService.getQuantity(
+      this.entry,
+      this.riskPoint,
+      this.totalCapital
     );
 
     this.tradeCalculatorFormControls['quantity'].patchValue(noOfShares);
@@ -470,7 +490,10 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   calculateNoOfSharesForLot() {}
 
   capitalRequired() {
-    const capitalRequired = Math.round(this.quantity * (this.entry / 5));
+    const capitalRequired = this.intraDayService.getCapitalRequired(
+      this.entry,
+      this.quantity
+    );
     this.tradeCalculatorFormControls['capitalRequired'].patchValue(
       capitalRequired
     );
@@ -481,10 +504,10 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     // Add your implementation here
     // Calculate the percentage of capital based on the quantity and other factors
 
-    const percentageOfCapital = (
-      (this.capitalRequiredValue / this.totalCapital) *
-      100
-    ).toFixed(2);
+    const percentageOfCapital = this.intraDayService.getPercentageOfCapital(
+      this.capitalRequiredValue,
+      this.totalCapital
+    );
     this.tradeCalculatorFormControls['percentageOfCapital'].patchValue(
       percentageOfCapital
     );
