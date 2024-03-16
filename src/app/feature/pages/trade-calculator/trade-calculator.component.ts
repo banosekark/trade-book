@@ -46,6 +46,8 @@ import { Observable } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
 import { Strategy } from '../../models/strategy.model';
 import { IntraDayService } from '../../services/intraday.service';
+import { UploadComponent } from '../../../themes/components/upload/upload.component';
+import { FileUploadService } from '../../../themes/services/file-upload.service';
 
 export interface User {
   name: string;
@@ -77,6 +79,7 @@ export interface User {
     MatChipsModule,
     MatSelectModule,
     FormsModule,
+    UploadComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './trade-calculator.component.html',
@@ -104,7 +107,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     { name: 'EMA 8/20' },
     { name: 'Top Down Approach' },
   ];
-  filteredOptions!: Observable<User[]>;
+  arrayOfObjects!: Observable<User[]>;
   strategyOptions!: Observable<Strategy[]>;
   tradeType: boolean = false;
   public icon = 'close';
@@ -129,12 +132,21 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private formBuilder: FormBuilder,
-    private intraDayService: IntraDayService
-  ) {}
+    private intraDayService: IntraDayService,
+    private fileUploadService: FileUploadService
+  ) {
+    this.fileUploadService.stockNameList.subscribe((data: any) => {
+      this.options = data;
+      this.tradeCalculatorForm.controls['autoComplete'].patchValue(
+        this.options
+      );
+      console.log('Stock Name List:', this.options);
+    });
+  }
 
   ngOnInit() {
     this.onTradeCalculatorForm();
-    this.filteredOptions = this.tradeCalculatorForm
+    this.arrayOfObjects = this.tradeCalculatorForm
       .get('autoComplete')!
       .valueChanges.pipe(
         startWith(''),
@@ -513,5 +525,9 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     );
 
     this.calculateRiskPerTrade();
+  }
+
+  setting() {
+    console.log('Setting');
   }
 }

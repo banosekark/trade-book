@@ -47,12 +47,12 @@
 //   border: 0;
 // }
 
-::ng-deep
-  .mdc-text-field--filled:not(.mdc-text-field--disabled)
-  .mdc-text-field__input.mat-mdc-autocomplete-trigger {
-  color: #fff !important;
-  border: 0;
-}
+// ::ng-deep
+//   .mdc-text-field--filled:not(.mdc-text-field--disabled)
+//   .mdc-text-field__input.mat-mdc-autocomplete-trigger {
+//   color: #fff !important;
+//   border: 0;
+// }
 
 ::ng-deep
   .mdc-text-field--no-label:not(.mdc-text-field--textarea)

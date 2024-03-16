@@ -53,6 +53,7 @@
                   </mat-form-field>
                 </div>
                 <div class="col-sm-4">
+                  <mat-icon matSuffix class="float-end" (click)="setting()">settings</mat-icon>
                   <mat-slide-toggle class="float-end" formControlName="tradeType" color="primary" hideIcon
                     (change)="onChangeTradeType($event)">{{ tradeType === true? 'Buy':'Sell'}}</mat-slide-toggle>
 
@@ -62,7 +63,7 @@
                     <mat-icon matPrefix>search</mat-icon>
                     <input matInput formControlName="autoComplete" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" class="autocomplete-pane">
-                      @for (option of filteredOptions | async; track option) {
+                      @for (option of arrayOfObjects | async; track option) {
                       <mat-option [value]="option">{{option.name}}</mat-option>
                       }
                     </mat-autocomplete>
@@ -226,8 +227,7 @@
     <mat-dialog-actions align="end">
       <button mat-raised-button mat-dialog-close color="accent">Close</button>
       <button mat-raised-button extended type="submit" [color]="tradeType? 'primary':'warn'">
-
-        Primary
+        Take Trade
       </button>
       <button mat-raised-button extended color="accent">
 
@@ -235,5 +235,5 @@
       </button>
     </mat-dialog-actions>
   </form>
-
+  <app-upload></app-upload>
 </div>
