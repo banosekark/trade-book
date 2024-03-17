@@ -52,11 +52,13 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div class="col-sm-4">
-                  <mat-icon matSuffix class="float-end" (click)="setting()">settings</mat-icon>
+                <div class="col-sm-2">
                   <mat-slide-toggle class="float-end" formControlName="tradeType" color="primary" hideIcon
                     (change)="onChangeTradeType($event)">{{ tradeType === true? 'Buy':'Sell'}}</mat-slide-toggle>
 
+                </div>
+                <div class="col-sm-2">
+                  <app-trade-calculator-settings class="float-end"></app-trade-calculator-settings>
                 </div>
                 <div class="col-sm-8">
                   <mat-form-field class="search-field" color="primary">
@@ -77,12 +79,22 @@
                   <mat-form-field>
                     <mat-label>Strategy Name</mat-label>
                     <mat-select [(value)]="selected" formControlName="strategy">
+                      <ng-container *ngFor="let option of strategy_options">
+                        <mat-option [value]="strategy_options">{{option.name}}</mat-option>
+                      </ng-container>
+
+
+                    </mat-select>
+                  </mat-form-field>
+                  <!-- <mat-form-field>
+                    <mat-label>Strategy Name</mat-label>
+                    <mat-select [(value)]="selected" formControlName="strategy">
                       @for (strategy_options of strategyOptions | async; track strategy_options) {
                       <mat-option [value]="strategy_options">{{strategy_options.name}}</mat-option>
                       }
 
                     </mat-select>
-                  </mat-form-field>
+                  </mat-form-field> -->
                 </div>
               </div>
             </div>
@@ -235,5 +247,4 @@
       </button>
     </mat-dialog-actions>
   </form>
-  <app-upload></app-upload>
 </div>

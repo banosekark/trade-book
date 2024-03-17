@@ -27,15 +27,15 @@
       </ng-container>
 
       <!-- State Column -->
-      <ng-container matColumnDef="state">
-        <th mat-header-cell *matHeaderCellDef>State</th>
+      <ng-container matColumnDef="tradeType">
+        <th mat-header-cell *matHeaderCellDef>Trade Type</th>
         <td mat-cell *matCellDef="let row">{{row.state}}</td>
       </ng-container>
 
       <!-- Created Column -->
-      <ng-container matColumnDef="created">
+      <ng-container matColumnDef="date">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Created
+          Date
         </th>
         <td mat-cell *matCellDef="let row">{{row.created_at | date}}</td>
       </ng-container>

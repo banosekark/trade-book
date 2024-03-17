@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { TradePlanService } from '../../../services/trade-plan.service';
 
 //   {
 //     date: 1,
@@ -136,7 +137,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   styleUrl: './trade-info.component.scss',
 })
 export class TradeInfoComponent {
-  displayedColumns: string[] = ['created', 'state', 'number', 'title'];
+  displayedColumns: string[] = ['date', 'tradeType', 'number', 'title'];
   exampleDatabase!: ExampleHttpDatabase | null;
   data: GithubIssue[] = [];
 
@@ -146,8 +147,17 @@ export class TradeInfoComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  tradeCalculatorData: any;
 
-  constructor(private _httpClient: HttpClient) {}
+  constructor(
+    private _httpClient: HttpClient,
+    private tradePlanService: TradePlanService
+  ) {
+    this.tradePlanService.tradeCalculatedData.subscribe((data: any) => {
+      this.tradeCalculatorData = data;
+      console.log('Trade Calculated Data:', this.tradeCalculatorData);
+    });
+  }
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -194,7 +204,7 @@ export interface GithubApi {
 }
 
 export interface GithubIssue {
-  created_at: string;
+  date: string;
   number: string;
   state: string;
   title: string;

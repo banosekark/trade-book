@@ -1,0 +1,21 @@
+<button mat-icon-button disableRipple="true" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+  <mat-icon>more_vert</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="openDialog('0ms', '0ms')">
+    <mat-icon>attach_file</mat-icon>
+    <span>Add Stock Name File</span>
+  </button>
+  <button mat-menu-item (click)="openDialog('0ms', '0ms')">
+    <mat-icon>attach_file</mat-icon>
+    <span>Add Strategy Name</span>
+  </button>
+  <button mat-menu-item disabled>
+    <mat-icon>voicemail</mat-icon>
+    <span>Check voice mail</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>notifications_off</mat-icon>
+    <span>Disable alerts</span>
+  </button>
+</mat-menu>

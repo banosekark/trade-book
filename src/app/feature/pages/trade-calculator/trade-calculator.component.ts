@@ -48,6 +48,8 @@ import { Strategy } from '../../models/strategy.model';
 import { IntraDayService } from '../../services/intraday.service';
 import { UploadComponent } from '../../../themes/components/upload/upload.component';
 import { FileUploadService } from '../../../themes/services/file-upload.service';
+import { TradePlanService } from '../../services/trade-plan.service';
+import { TradeCalculatorSettingsComponent } from './trade-calculator-settings/trade-calculator-settings.component';
 
 export interface User {
   name: string;
@@ -80,6 +82,7 @@ export interface User {
     MatSelectModule,
     FormsModule,
     UploadComponent,
+    TradeCalculatorSettingsComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './trade-calculator.component.html',
@@ -133,11 +136,12 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private formBuilder: FormBuilder,
     private intraDayService: IntraDayService,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    private tradePlanService: TradePlanService
   ) {
     this.fileUploadService.stockNameList.subscribe((data: any) => {
-      this.options = data;
-      this.tradeCalculatorForm.controls['autoComplete'].patchValue(
+      this.options = [...data];
+      this.tradeCalculatorForm?.controls['autoComplete']?.patchValue(
         this.options
       );
       console.log('Stock Name List:', this.options);
@@ -153,18 +157,6 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
         map((value) => {
           const name = typeof value === 'string' ? value : value?.name;
           return name ? this._filter(name as string) : this.options.slice();
-        })
-      );
-
-    this.strategyOptions = this.tradeCalculatorForm
-      .get('strategy')!
-      .valueChanges.pipe(
-        startWith(''),
-        map((value) => {
-          const name = typeof value === 'string' ? value : value?.name;
-          return name
-            ? this._filter(name as string)
-            : this.strategy_options.slice();
         })
       );
   }
@@ -318,7 +310,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
 
   OnTradeCalculatorFormSubmitted() {
     this.tradeUserInputData = this.tradeCalculatorForm.value;
-    console.log(this.tradeUserInputData);
+    this.tradePlanService.tradeCalculatedData.next(this.tradeUserInputData);
   }
 
   displayFn(user: User): string {

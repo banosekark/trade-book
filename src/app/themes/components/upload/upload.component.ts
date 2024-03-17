@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { FileUploadService } from '../../services/file-upload.service';
 import { User } from '../../../feature/pages/trade-calculator/trade-calculator.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [],
+  imports: [MatDialogModule, MatButtonModule],
   templateUrl: './upload.component.html',
   styleUrl: './upload.component.scss',
 })
