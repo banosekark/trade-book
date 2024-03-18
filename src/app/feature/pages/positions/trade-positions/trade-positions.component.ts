@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
@@ -44,11 +44,17 @@ const ELEMENT_DATA: PeriodicElement[] = [
   templateUrl: './trade-positions.component.html',
   styleUrl: './trade-positions.component.scss',
 })
-export class TradePositionsComponent {
-  value = 'Clear me';
+export class TradePositionsComponent implements OnInit {
+  value!: number;
   displayedColumns: string[] = ['select', 'name', 'entry', 'weight', 'symbol'];
   dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
   selection = new SelectionModel<PeriodicElement>(true, []);
+
+  ngOnInit() {
+    this.dataSource.data.forEach((element) => {
+      this.value = element.entry;
+    });
+  }
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {

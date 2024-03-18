@@ -33,7 +33,7 @@
       <mat-form-field class="example-form-field">
         <input matInput type="text" [(ngModel)]="value">
         @if (value) {
-        <button matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+        <button matSuffix mat-icon-button (click)="value=element.entry">
           <mat-icon>close</mat-icon>
         </button>
         }
