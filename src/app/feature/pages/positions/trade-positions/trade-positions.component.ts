@@ -12,21 +12,39 @@ export interface PeriodicElement {
   name: string;
   position: number;
   entry: number;
-  weight: number;
-  symbol: string;
+  stopLoss: number;
+  actions: string;
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', entry: 300, weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', entry: 300, weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', entry: 300, weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', entry: 300, weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', entry: 300, weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', entry: 300, weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', entry: 300, weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', entry: 300, weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', entry: 300, weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', entry: 300, weight: 20.1797, symbol: 'Ne' },
+  { position: 1, name: 'Hydrogen', entry: 300, stopLoss: 1.0079, actions: '' },
+  { position: 2, name: 'Helium', entry: 300, stopLoss: 4.0026, actions: '' },
+  { position: 3, name: 'Lithium', entry: 300, stopLoss: 6.941, actions: '' },
+  {
+    position: 4,
+    name: 'Beryllium',
+    entry: 300,
+    stopLoss: 9.0122,
+    actions: '',
+  },
+  { position: 5, name: 'Boron', entry: 300, stopLoss: 10.811, actions: '' },
+  { position: 6, name: 'Carbon', entry: 300, stopLoss: 12.0107, actions: '' },
+  {
+    position: 7,
+    name: 'Nitrogen',
+    entry: 300,
+    stopLoss: 14.0067,
+    actions: '',
+  },
+  { position: 8, name: 'Oxygen', entry: 300, stopLoss: 15.9994, actions: '' },
+  {
+    position: 9,
+    name: 'Fluorine',
+    entry: 300,
+    stopLoss: 18.9984,
+    actions: 'F',
+  },
+  { position: 10, name: 'Neon', entry: 300, stopLoss: 20.1797, actions: '' },
 ];
 @Component({
   selector: 'app-trade-positions',
@@ -45,14 +63,22 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrl: './trade-positions.component.scss',
 })
 export class TradePositionsComponent implements OnInit {
-  value!: number;
-  displayedColumns: string[] = ['select', 'name', 'entry', 'weight', 'symbol'];
+  entryValue!: number;
+  slValue!: number;
+  displayedColumns: string[] = [
+    'select',
+    'name',
+    'entry',
+    'stopLoss',
+    'actions',
+  ];
   dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
   selection = new SelectionModel<PeriodicElement>(true, []);
 
   ngOnInit() {
     this.dataSource.data.forEach((element) => {
-      this.value = element.entry;
+      this.entryValue = element.entry;
+      this.slValue = element.stopLoss;
     });
   }
 
