@@ -35,9 +35,15 @@ export class TradeInfoComponent {
     this.tradePlanService.tradeCalculatedData.subscribe((data: any) => {
       this.calculatorData = data;
       console.log('Trade Calculated Data:', this.calculatorData);
-      this.ELEMENT_DATA.push(this.calculatorData);
+      // this.ELEMENT_DATA.push(this.calculatorData);
+      this.ELEMENT_DATA.push({
+        ...this.calculatorData,
+        position: this.ELEMENT_DATA.length + 1,
+      });
 
-      console.log('ELEMENT_DATA:', this.ELEMENT_DATA);
+      // update the dataSource
+      this.dataSource.data = this.ELEMENT_DATA;
+      console.log('dataSource:', this.dataSource);
     });
   }
 

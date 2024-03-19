@@ -63,6 +63,8 @@ export class TradePositionsComponent implements OnInit {
       actions: '',
     });
 
+
+
     // update the dataSource
     this.dataSource.data = ELEMENT_DATA;
   }
