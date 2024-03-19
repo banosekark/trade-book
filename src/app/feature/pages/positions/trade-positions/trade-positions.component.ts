@@ -102,9 +102,9 @@ export class TradePositionsComponent implements OnInit {
   onBookTrade() {
     this.dataSource.data.forEach((element) => {
       console.log('element', element.entry);
-      // update the dataSource value to tradePlanService tradeCalculatorData
+      // add all value in tradePlanService tradeCalculatorData
       this.tradePlanService.updateTradeCalculatedData({
-        name: element.name,
+        ...this.calculatorData,
         entry: element.entry,
         stopLoss: element.stopLoss,
       });

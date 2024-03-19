@@ -110,6 +110,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     { name: 'EMA 8/20' },
     { name: 'Top Down Approach' },
   ];
+  selectedOption = this.strategy_options[1]; // Pre-select 'Option 2'
   arrayOfObjects!: Observable<User[]>;
   strategyOptions!: Observable<Strategy[]>;
   tradeType: boolean = false;
@@ -170,7 +171,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
       autoComplete: ['', Validators.required],
       totalCapital: ['165000', Validators.required],
       tradeType: ['', Validators.required],
-      strategy: [''],
+      selectStrategy: [this.selectedOption.name, Validators.required],
       tradeDate: [new Date(), Validators.required],
       entry: ['', [Validators.required]],
       stopLoss: ['', Validators.required],
@@ -226,7 +227,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
 
   // get strategy controls value for easy access
   get strategy() {
-    return this.tradeCalculatorForm.controls['strategy'].value;
+    return this.tradeCalculatorForm.controls['selectStrategy'].value;
   }
 
   // get tradeDate controls value for easy access
@@ -309,7 +310,9 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   tradeUserInputData: any;
 
   OnTradeCalculatorFormSubmitted() {
+    console.log('strategy:', this.strategy);
     this.tradeUserInputData = this.tradeCalculatorForm.value;
+    console.log('Trade User Input Data:', this.tradeUserInputData);
     // send the tradeUserInputData to the TradePlanService
     this.tradePlanService.updateTradeCalculatedData(this.tradeUserInputData);
 

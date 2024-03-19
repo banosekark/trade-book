@@ -78,9 +78,9 @@
                 <div class="col-sm-4">
                   <mat-form-field>
                     <mat-label>Strategy Name</mat-label>
-                    <mat-select [(value)]="selected" formControlName="strategy">
+                    <mat-select formControlName="selectStrategy">
                       <ng-container *ngFor="let option of strategy_options">
-                        <mat-option [value]="strategy_options">{{option.name}}</mat-option>
+                        <mat-option [value]="option.name">{{option.name}}</mat-option>
                       </ng-container>
 
 
