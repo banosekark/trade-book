@@ -310,7 +310,10 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
 
   OnTradeCalculatorFormSubmitted() {
     this.tradeUserInputData = this.tradeCalculatorForm.value;
-    this.tradePlanService.tradeCalculatedData.next(this.tradeUserInputData);
+    // send the tradeUserInputData to the TradePlanService
+    this.tradePlanService.updateTradeCalculatedData(this.tradeUserInputData);
+
+    console.log('Trade User Input Data:', this.tradeUserInputData);
   }
 
   displayFn(user: User): string {

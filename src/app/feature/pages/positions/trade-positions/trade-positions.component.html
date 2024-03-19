@@ -30,13 +30,17 @@
     <th mat-header-cell *matHeaderCellDef> Entry </th>
     <td mat-cell *matCellDef="let element">
 
-      <mat-form-field class="example-form-field">
-        <input matInput type="text" [(ngModel)]="entryValue">
-        @if (entryValue) {
-        <button matSuffix mat-icon-button (click)="entryValue=element.entry">
+      <!-- <mat-form-field class="example-full-width">
+
+        <input matInput type="text" [(ngModel)]="element.entry">
+        @if (element.entry) {
+        <button matSuffix mat-icon-button (click)="element.entry=null">
           <mat-icon>close</mat-icon>
         </button>
         }
+      </mat-form-field> -->
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Ex. San Francisco" [(ngModel)]="element.entry">
       </mat-form-field>
     </td>
   </ng-container>
@@ -45,13 +49,9 @@
   <ng-container matColumnDef="stopLoss">
     <th mat-header-cell *matHeaderCellDef> stopLoss </th>
     <td mat-cell *matCellDef="let element">
-      <mat-form-field class="example-form-field">
-        <input matInput type="text" [(ngModel)]="slValue">
-        @if (slValue) {
-        <button matSuffix mat-icon-button (click)="slValue=element.stopLoss">
-          <mat-icon>close</mat-icon>
-        </button>
-        }
+      <mat-form-field class="example-full-width">
+
+        <input matInput placeholder="Ex. San Francisco" [(ngModel)]="element.stopLoss">
       </mat-form-field>
     </td>
   </ng-container>
@@ -60,7 +60,7 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef> Actions </th>
     <td mat-cell *matCellDef="let element">
-      <button mat-button color="primary">Book Profit</button>
+      <button mat-button color="primary" (click)="onBookTrade()">Book Profit</button>
       <button mat-button color="primary">Book SL</button>
     </td>
   </ng-container>
