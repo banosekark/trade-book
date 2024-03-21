@@ -131,6 +131,7 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   isQuantity: boolean = true;
 
   @ViewChild('tradeCalculator') tradeCalculator!: ElementRef;
+  tradeUserInputData: any[] = [];
 
   constructor(
     private renderer: Renderer2,
@@ -145,7 +146,6 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
       this.tradeCalculatorForm?.controls['autoComplete']?.patchValue(
         this.options
       );
-      console.log('Stock Name List:', this.options);
     });
   }
 
@@ -307,14 +307,10 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     return this.tradeCalculatorForm.controls['riskPerTrade'].value;
   }
 
-  tradeUserInputData: any;
-
   OnTradeCalculatorFormSubmitted() {
-    console.log('strategy:', this.strategy);
     this.tradeUserInputData = this.tradeCalculatorForm.value;
-    console.log('Trade User Input Data:', this.tradeUserInputData);
     // send the tradeUserInputData to the TradePlanService
-    this.tradePlanService.updateTradeCalculatedData(this.tradeUserInputData);
+    this.tradePlanService.updateDataArray(this.tradeUserInputData);
 
     console.log('Trade User Input Data:', this.tradeUserInputData);
   }
@@ -420,7 +416,6 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
   }
 
   onChangeRatio(event: any) {
-    console.log(event.value);
     event.value === '2'
       ? (this.OptionFirstSelected = true)
       : (this.OptionFirstSelected = false);
@@ -525,7 +520,5 @@ export class TradeCalculatorComponent implements OnInit, AfterViewInit {
     this.calculateRiskPerTrade();
   }
 
-  setting() {
-    console.log('Setting');
-  }
+  setting() {}
 }

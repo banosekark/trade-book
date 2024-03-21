@@ -1,5 +1,5 @@
 <div class="trade-calculator-window" #tradeCalculator>
-  <form [formGroup]="tradeCalculatorForm" (ngSubmit)="OnTradeCalculatorFormSubmitted()">
+  <form [formGroup]="tradeCalculatorForm">
     <!--header start -->
     <div class="header" [ngClass]="tradeType ? 'bg-primary' : 'bg-warn'">
       <h1 class="py-3">Plan Trade</h1>
@@ -238,7 +238,8 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-raised-button mat-dialog-close color="accent">Close</button>
-      <button mat-raised-button extended type="submit" [color]="tradeType? 'primary':'warn'">
+      <button mat-raised-button extended type="submit" (click)="OnTradeCalculatorFormSubmitted()"
+        [color]="tradeType? 'primary':'warn'">
         Take Trade
       </button>
       <button mat-raised-button extended color="accent">

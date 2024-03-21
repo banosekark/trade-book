@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, OnInit, input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, input } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
@@ -11,14 +11,20 @@ import { TradePlanService } from '../../../services/trade-plan.service';
 import e from 'express';
 
 export interface PeriodicElement {
-  name: string;
+  date: string;
+  stockName: string;
+  tradeType: string;
+  strategyName: string;
+  entry: string;
+  sL: string;
+  target1: number;
+  target2: number;
+  tradeResult: string;
+  rulesFollowed: string;
   position: number;
-  entry: number;
-  stopLoss: number;
   actions: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [];
 @Component({
   selector: 'app-trade-positions',
   standalone: true,
@@ -35,7 +41,7 @@ const ELEMENT_DATA: PeriodicElement[] = [];
   templateUrl: './trade-positions.component.html',
   styleUrl: './trade-positions.component.scss',
 })
-export class TradePositionsComponent implements OnInit {
+export class TradePositionsComponent implements OnInit, OnDestroy {
   // entryValue!: number;
   // slValue!: number;
   displayedColumns: string[] = [
@@ -44,34 +50,53 @@ export class TradePositionsComponent implements OnInit {
     'name',
     'entry',
     'stopLoss',
+    'target1',
+    'target2',
     'actions',
   ];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
+  ELEMENT_DATA: PeriodicElement[] = [];
+  dataSource = new MatTableDataSource<PeriodicElement>(this.ELEMENT_DATA);
   selection = new SelectionModel<PeriodicElement>(true, []);
   calculatorData: any;
 
   constructor(private tradePlanService: TradePlanService) {
-    this.tradePlanService.tradeCalculatedData.subscribe((data: any) => {
+    this.tradePlanService.dataArraySubject.subscribe((data: any) => {
       this.calculatorData = data;
-      console.log('Trade Calculated Data:', this.calculatorData);
-    });
-    ELEMENT_DATA.push({
-      name: this.calculatorData['autoComplete']['name'],
-      entry: this.calculatorData['entry'],
-      stopLoss: this.calculatorData.stopLoss,
-      position: ELEMENT_DATA.length + 1,
-      actions: '',
+      console.log('this.calculatorDataIn-Trade-info', this.calculatorData);
     });
 
+    this.ELEMENT_DATA = this.calculatorData;
+    console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
 
+    this.ELEMENT_DATA.forEach((element, index) => {
+      element.date = this.calculatorData[index].date;
+      element.stockName = this.calculatorData[index]['autoComplete']['name'];
+      element.tradeType = this.calculatorData[index]['tradeType'];
+      element.strategyName = this.calculatorData[index]['selectStrategy'];
+      element.entry = this.calculatorData[index].entry;
+      element.sL = this.calculatorData[index]['stopLoss'];
+      element.target1 = this.calculatorData[index]['target1'];
+      element.target2 = this.calculatorData[index]['target2'];
+      element.tradeResult = this.calculatorData[index]['tradeResult'];
+      element.rulesFollowed = this.calculatorData[index]['rulesFollowed'];
+      element.position = index + 1;
+      element.actions = 'edit';
 
-    // update the dataSource
-    this.dataSource.data = ELEMENT_DATA;
+      this.ELEMENT_DATA.push(element);
+    });
   }
-
   ngOnInit() {
-    console.log('this.dataSource.data', this.dataSource.data);
-    this.dataSource.data.forEach((element) => {});
+    // this.ELEMENT_DATA = this.calculatorData;
+
+    console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
+
+    // push the data to the ELEMENT_DATA array
+    // this.ELEMENT_DATA.push({
+
+    // update the data source
+    this.dataSource = new MatTableDataSource<PeriodicElement>(
+      this.ELEMENT_DATA
+    );
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -102,14 +127,9 @@ export class TradePositionsComponent implements OnInit {
   }
 
   onBookTrade() {
-    this.dataSource.data.forEach((element) => {
-      console.log('element', element.entry);
-      // add all value in tradePlanService tradeCalculatorData
-      this.tradePlanService.updateTradeCalculatedData({
-        ...this.calculatorData,
-        entry: element.entry,
-        stopLoss: element.stopLoss,
-      });
-    });
+    // update dataSource in service
+    this.tradePlanService.dataArraySubject.next(this.dataSource.data);
   }
+
+  ngOnDestroy() {}
 }

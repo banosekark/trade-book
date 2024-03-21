@@ -14,11 +14,7 @@ import { TradePlanService } from '../../services/trade-plan.service';
 export class PositionsComponent implements OnInit {
   tradeCalculatorData: any;
 
-  constructor(private tradePlanService: TradePlanService) {
-    this.tradePlanService.tradeCalculatedData.subscribe((data: any) => {
-      this.tradeCalculatorData = data;
-    });
-  }
+  constructor(private tradePlanService: TradePlanService) {}
 
   ngOnInit() {}
 }

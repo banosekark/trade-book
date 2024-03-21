@@ -6,27 +6,20 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class TradePlanService {
   // Define a BehaviorSubject with an initial empty array
-  private dataArraySubject = new BehaviorSubject<any[]>([]);
-
-  // Expose an observable to subscribers
-  tradeCalculatedData = this.dataArraySubject.asObservable();
-  tradeCalculatorData: any;
+  dataArraySubject = new BehaviorSubject<any[]>([]);
+  formData: any[] = [];
 
   constructor() {}
 
-  // Define a method to update the BehaviorSubject
-  updateTradeCalculatedData(data: any) {
-    this.tradeCalculatorData = data;
-    this.dataArraySubject.next(data);
+  // Create a method to update the BehaviorSubject
+  updateDataArray(data: any[]) {
+    this.formData.push(data);
+    console.log('this.formData', this.formData);
+    this.dataArraySubject.next(this.formData);
   }
 
-  // Define a method to get the BehaviorSubject value
-  getTradeCalculatedData() {
-    return this.tradeCalculatorData;
-  }
-
-  // Define a method to clear the BehaviorSubject
-  clearTradeCalculatedData() {
-    this.dataArraySubject.next([]);
+  // Create a method to get the BehaviorSubject value
+  getDataArray() {
+    return this.dataArraySubject.asObservable();
   }
 }
