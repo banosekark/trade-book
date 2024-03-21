@@ -47,22 +47,22 @@ export class TradeInfoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ELEMENT_DATA = this.calculatorData;
     console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
 
-    this.ELEMENT_DATA.forEach((element, index) => {
-      element.date = this.calculatorData[index].date;
-      element.stockName = this.calculatorData[index]['autoComplete']['name'];
-      element.tradeType = this.calculatorData[index]['tradeType'];
-      element.strategyName = this.calculatorData[index]['selectStrategy'];
-      element.entry = this.calculatorData[index].entry;
-      element.sL = this.calculatorData[index]['stopLoss'];
-      element.target1 = this.calculatorData[index]['target1'];
-      element.target2 = this.calculatorData[index]['target2'];
-      element.tradeResult = this.calculatorData[index]['tradeResult'];
-      element.rulesFollowed = this.calculatorData[index]['rulesFollowed'];
-      element.position = index + 1;
-      element.actions = 'edit';
+    // this.ELEMENT_DATA.forEach((element, index) => {
+    //   element.date = this.calculatorData[index].date;
+    //   element.stockName = this.calculatorData[index]['autoComplete']['name'];
+    //   element.tradeType = this.calculatorData[index]['tradeType'];
+    //   element.strategyName = this.calculatorData[index]['selectStrategy'];
+    //   element.entry = this.calculatorData[index].entry;
+    //   element.sL = this.calculatorData[index]['stopLoss'];
+    //   element.target1 = this.calculatorData[index]['target1'];
+    //   element.target2 = this.calculatorData[index]['target2'];
+    //   element.tradeResult = this.calculatorData[index]['tradeResult'];
+    //   element.rulesFollowed = this.calculatorData[index]['rulesFollowed'];
+    //   element.position = index + 1;
+    //   element.actions = 'edit';
 
-      this.ELEMENT_DATA.push(element);
-    });
+    //   this.ELEMENT_DATA.push(element);
+    // });
   }
 
   ngOnInit(): void {
