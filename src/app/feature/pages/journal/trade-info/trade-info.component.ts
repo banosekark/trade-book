@@ -46,6 +46,9 @@ export class TradeInfoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.ELEMENT_DATA = this.calculatorData;
     console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
+    this.ELEMENT_DATA.forEach((element, index) => {
+      element.position = index + 1;
+    });
 
     // this.ELEMENT_DATA.forEach((element, index) => {
     //   element.date = this.calculatorData[index].date;

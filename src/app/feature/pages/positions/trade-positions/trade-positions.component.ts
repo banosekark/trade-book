@@ -84,6 +84,9 @@ export class TradePositionsComponent implements OnInit, OnDestroy {
     //   this.ELEMENT_DATA.push(element);
     // });
     this.ELEMENT_DATA = this.calculatorData;
+    this.ELEMENT_DATA.forEach((element, index) => {
+      element.position = index + 1;
+    });
     this.dataSource = new MatTableDataSource<PeriodicElement>(
       this.ELEMENT_DATA
     );
