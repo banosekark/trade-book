@@ -1,5 +1,13 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, OnDestroy, OnInit, input } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
+  input,
+} from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
@@ -9,20 +17,24 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { TradePlanService } from '../../../services/trade-plan.service';
 import e from 'express';
+import { CommonModule } from '@angular/common';
 
 export interface PeriodicElement {
   date: string;
   stockName: string;
   tradeType: string;
   strategyName: string;
-  entry: string;
-  sL: string;
+  entry: number;
+  stopLoss: number;
   target1: number;
   target2: number;
+  loss: number;
   tradeResult: string;
   rulesFollowed: string;
   position: number;
   actions: string;
+  isLossDisabled: boolean;
+  isTargetDisabled: boolean;
 }
 
 @Component({
@@ -37,6 +49,7 @@ export interface PeriodicElement {
     FormsModule,
     MatButtonModule,
     MatIconModule,
+    CommonModule,
   ],
   templateUrl: './trade-positions.component.html',
   styleUrl: './trade-positions.component.scss',
@@ -51,13 +64,16 @@ export class TradePositionsComponent implements OnInit, OnDestroy {
     'entry',
     'stopLoss',
     'target1',
-    'target2',
+    'loss',
     'actions',
   ];
   ELEMENT_DATA: PeriodicElement[] = [];
   dataSource = new MatTableDataSource<PeriodicElement>(this.ELEMENT_DATA);
   selection = new SelectionModel<PeriodicElement>(true, []);
   calculatorData: any;
+  inputTarget!: number;
+  inputLoss!: number;
+  @ViewChildren('nameInput') nameInputs!: QueryList<HTMLInputElement>;
 
   constructor(private tradePlanService: TradePlanService) {
     this.tradePlanService.dataArraySubject.subscribe((data: any) => {
@@ -83,23 +99,39 @@ export class TradePositionsComponent implements OnInit, OnDestroy {
 
     //   this.ELEMENT_DATA.push(element);
     // });
+
+    // get value from input fields
+
     this.ELEMENT_DATA = this.calculatorData;
     this.ELEMENT_DATA.forEach((element, index) => {
       element.position = index + 1;
+      element.isLossDisabled = false;
+      element.isTargetDisabled = false;
     });
+
     this.dataSource = new MatTableDataSource<PeriodicElement>(
       this.ELEMENT_DATA
     );
   }
   ngOnInit() {
-    // this.ELEMENT_DATA = this.calculatorData;
+    this.dataSource = new MatTableDataSource<PeriodicElement>(
+      this.ELEMENT_DATA
+    );
+  }
 
-    console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
-
-    // push the data to the ELEMENT_DATA array
-    // this.ELEMENT_DATA.push({
-
-    // update the data source
+  inputTargetValue(element: any) {
+    if (element.target1 && element.target1 !== 0) {
+      element.isLossDisabled = true;
+    } else {
+      element.isLossDisabled = false;
+    }
+  }
+  inputLossValue(element: any) {
+    if (element.loss && element.loss !== 0) {
+      element.isTargetDisabled = true;
+    } else {
+      element.isTargetDisabled = false;
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -132,6 +164,8 @@ export class TradePositionsComponent implements OnInit, OnDestroy {
   onBookTrade() {
     // update dataSource in service
     this.tradePlanService.dataArraySubject.next(this.dataSource.data);
+
+    console.log('this.dataSource.data', this.dataSource.data);
   }
 
   ngOnDestroy() {}

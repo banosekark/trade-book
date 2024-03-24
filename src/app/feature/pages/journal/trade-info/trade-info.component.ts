@@ -28,7 +28,7 @@ export class TradeInfoComponent implements OnInit, AfterViewInit, OnDestroy {
     'entry',
     'sL',
     'target1',
-    'target2',
+    'loss',
     'tradeResult',
     'rulesFollowed',
   ];
@@ -98,7 +98,7 @@ export interface PeriodicElement {
   entry: string;
   sL: string;
   target1: number;
-  target2: number;
+  loss: number;
   tradeResult: string;
   rulesFollowed: string;
   position: number;
