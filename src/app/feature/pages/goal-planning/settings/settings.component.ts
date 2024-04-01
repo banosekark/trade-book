@@ -135,12 +135,13 @@ export class SettingsComponent {
       );
       // add the previous month closing capital to the current month opening capital
       if (i > 0) {
-        // if actualClosingCapital is not null, then set it to openingCapital
-        if (this.actualClosingCapital.value !== null) {
-          this.openingCapital.patchValue(this.actualClosingCapital.value);
-        } else {
+        // take closing capital if actual closing capital is not provided
+        if (this.actualClosingCapital.value === 0) {
           this.openingCapital.patchValue(this.closingCapital.value);
+        } else {
+          this.openingCapital.patchValue(this.actualClosingCapital.value);
         }
+
         this.calculateProfit(
           this.openingCapital.value,
           this.capitalIntroduced.value,
