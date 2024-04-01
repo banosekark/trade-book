@@ -27,41 +27,41 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
   ];
   ELEMENT_DATA: PeriodicElement[] = [];
   dataSource = new MatTableDataSource<PeriodicElement>(this.ELEMENT_DATA);
-  settingsData: any[] = [];
+  settingsData: PeriodicElement[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private tradePlanService: TradePlanService) {
-    this.tradePlanService.getSettingsData().subscribe((data) => {
-      this.settingsData = data;
-      this.settingsData.forEach((element: any, index: number) => {
+    this.ELEMENT_DATA = [];
+    this.tradePlanService.settingsData$.subscribe((data) => {
+      // increment the position value
+
+      if (Object.keys(data).length !== 0) {
         this.ELEMENT_DATA.push({
-          position: index + 1,
-          date: element.date,
-          openingCapital: element.openingCapital,
-          capitalIntroduced: element.capitalIntroduced,
-          roi: element.roi,
-          profit: element.profit,
-          withdrawn: element.withdrawn,
-          closingCapital: element.closingCapital,
-          actualClosingCapital: element.actualClosingCapital,
+          date: data?.date,
+          position: data.position + 1,
+          openingCapital: data?.openingCapital,
+          capitalIntroduced: data?.capitalIntroduced,
+          roi: data?.roi,
+          profit: data?.profit,
+          withdrawn: data?.withdrawn,
+          closingCapital: data?.closingCapital,
+          actualClosingCapital: data?.actualClosingCapital,
         });
-      });
-      this.dataSource = new MatTableDataSource<PeriodicElement>(
-        this.ELEMENT_DATA
-      );
-      this.dataSource.paginator = this.paginator;
+      }
+
+      this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     });
   }
+  ngOnInit(): void {}
 
-  ngOnInit() {}
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 }
 
 export interface PeriodicElement {
-  date: Date;
+  date: string;
   position: number;
   openingCapital: number;
   capitalIntroduced: number;

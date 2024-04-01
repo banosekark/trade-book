@@ -7,7 +7,8 @@ import { BehaviorSubject } from 'rxjs';
 export class TradePlanService {
   // Define a BehaviorSubject with an initial empty array
   dataArraySubject = new BehaviorSubject<any[]>([]);
-  settingsDataSubject = new BehaviorSubject<any[]>([]);
+  settingsDataSubject = new BehaviorSubject<any>({});
+  settingsData$ = this.settingsDataSubject.asObservable();
   formData: any[] = [];
   settingsData: any[] = [];
 
@@ -25,9 +26,9 @@ export class TradePlanService {
     return this.dataArraySubject.asObservable();
   }
 
-  updateSettingsData(data: any[]) {
-    this.settingsData.push(data);
-    this.settingsDataSubject.next(this.settingsData);
+  updateSettingsData(data: any) {
+    // this.settingsData.push(data);
+    this.settingsDataSubject.next(data);
   }
 
   getSettingsData() {
