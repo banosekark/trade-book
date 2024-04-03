@@ -50,6 +50,11 @@ export class SettingsComponent {
 
   ngOnInit() {
     this.onGoalSettingFormInit();
+    this.tradePlanService.selectedRowData$.subscribe((data) => {
+      if (data) {
+        this.goalSettingForm.patchValue(data);
+      }
+    });
   }
 
   onGoalSettingFormInit() {
@@ -105,12 +110,19 @@ export class SettingsComponent {
   }
 
   onSubmit() {
-    // (<FormArray>this.goalSettingForm.get('generateGoal')).push(
-    //   new FormControl(null)
-    // );
-    this.onGet12MonthsPlan(this.date.value);
+    // Get the updated data from the form
+    const updatedData = this.goalSettingForm.value;
 
-    console.log('this.goalSettingForm.value', this.goalSettingForm.value);
+    // Update the selected row data in the service
+    this.tradePlanService.updateSelectedRowData(updatedData);
+  }
+
+  onGeneratePlan() {
+    const date = this.date.value;
+    this.onGet12MonthsPlan(date);
+
+    this.tradePlanService.updateDataArray(this.goalSettingsFormData);
+
     this.resetForm();
   }
 

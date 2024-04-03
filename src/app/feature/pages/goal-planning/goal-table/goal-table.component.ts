@@ -53,10 +53,19 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
       this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     });
   }
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.tradePlanService.selectedRowData$.subscribe(() => {
+      this.dataSource._updateChangeSubscription(); // Refresh the table
+    });
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+  }
+
+  onRowClicked(row: any) {
+    this.tradePlanService.selectedRowIndex = row.position - 1;
+    this.tradePlanService.selectedRowData$.next(row);
   }
 }
 

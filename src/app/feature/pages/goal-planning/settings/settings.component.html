@@ -54,7 +54,7 @@
         <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
       </mat-form-field>
       <button mat-raised-button>Basic</button>
-      <button type="submit" mat-raised-button color="primary">Primary</button>
+      <button type="submit" mat-raised-button color="primary" (click)="onGeneratePlan()">Primary</button>
       <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
     </form>
   </mat-card-content>
