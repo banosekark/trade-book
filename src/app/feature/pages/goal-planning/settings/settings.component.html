@@ -53,9 +53,12 @@
         <mat-hint align="start"><strong>Don't disclose personal info</strong> </mat-hint>
         <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
       </mat-form-field>
-      <button mat-raised-button>Basic</button>
-      <button type="submit" mat-raised-button color="primary" (click)="onGeneratePlan()">Primary</button>
-      <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
+      <div class="button-group">
+        <button type="submit" mat-raised-button color="primary" (click)="onGeneratePlan()">Generate Plan</button>
+        <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
+        <button mat-raised-button color="primary" (click)="onUpdate()">Update</button>
+      </div>
+
     </form>
   </mat-card-content>
 </mat-card>

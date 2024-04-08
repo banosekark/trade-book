@@ -54,9 +54,82 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
     });
   }
   ngOnInit() {
-    this.tradePlanService.selectedRowData$.subscribe(() => {
-      this.dataSource._updateChangeSubscription(); // Refresh the table
+    this.tradePlanService.selectedRowData$.subscribe((data: any) => {
+      // ...
+
+      const index = this.tradePlanService.selectedRowIndex;
+      if (index !== -1) {
+        // Update the selected row and all the rows below it
+        for (let i = index; i < this.ELEMENT_DATA.length; i++) {
+          // Apply the business logic from setting.component.ts here
+          this.ELEMENT_DATA[i] = {
+            ...this.ELEMENT_DATA[i],
+            openingCapital: this.updateCapitalValues(
+              data,
+              this.ELEMENT_DATA[i]
+            ), // Use the imported function
+            capitalIntroduced: data.capitalIntroduced,
+            roi: data.roi,
+            profit: this.calculateProfit(data, this.ELEMENT_DATA[i]), // Use the imported function
+            withdrawn: data.withdrawn,
+            closingCapital: this.calculateClosingCapital(
+              data,
+              this.ELEMENT_DATA[i]
+            ), // Use the imported function
+            actualClosingCapital: this.calculateActualClosingCapital(
+              data,
+              this.ELEMENT_DATA[i]
+            ), // Use the imported function
+          };
+        }
+        this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
+      }
     });
+  }
+
+  calculateOpeningCapital(data: PeriodicElement, row: PeriodicElement) {
+    // previous month closing capital or actual closing capital is the next month opening capital
+    return row.actualClosingCapital === 0
+      ? row.closingCapital
+      : row.actualClosingCapital;
+  }
+
+  calculateProfit(data: PeriodicElement, row: PeriodicElement) {
+    // Calculate the profit
+    const profit =
+      ((row.openingCapital + data.capitalIntroduced) * data.roi) / 100;
+    return profit;
+  }
+
+  calculateClosingCapital(data: PeriodicElement, row: PeriodicElement) {
+    // Calculate the closing capital
+    const closingCapital =
+      row.openingCapital +
+      data.capitalIntroduced +
+      data.profit -
+      data.withdrawn;
+    return closingCapital;
+  }
+
+  calculateActualClosingCapital(data: PeriodicElement, row: PeriodicElement) {
+    // Calculate the actual closing capital if it is not provided
+
+    if (row.actualClosingCapital === 0) {
+      return row.closingCapital;
+    }
+
+    return row.actualClosingCapital;
+  }
+
+  updateCapitalValues(data: PeriodicElement, row: PeriodicElement) {
+    for (let i = 1; i < this.ELEMENT_DATA.length; i++) {
+      const previousRow = this.ELEMENT_DATA[i - 1];
+      const currentRow = this.ELEMENT_DATA[i];
+      if (currentRow.position === row.position) {
+        return this.calculateOpeningCapital(data, previousRow);
+      }
+    }
+    return 0; // Add a default return value here
   }
 
   ngAfterViewInit() {
@@ -64,6 +137,9 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
   }
 
   onRowClicked(row: any) {
+    // get the row data on click table row
+    //
+
     this.tradePlanService.selectedRowIndex = row.position - 1;
     this.tradePlanService.selectedRowData$.next(row);
   }

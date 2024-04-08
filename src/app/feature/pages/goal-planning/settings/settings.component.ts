@@ -15,6 +15,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { TradePlanService } from '../../../services/trade-plan.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-settings',
@@ -30,6 +31,7 @@ import { TradePlanService } from '../../../services/trade-plan.service';
     MatDatepickerModule,
     MatIconModule,
     ReactiveFormsModule,
+    MatButtonModule,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -55,6 +57,45 @@ export class SettingsComponent {
         this.goalSettingForm.patchValue(data);
       }
     });
+  }
+
+  onUpdate() {
+    //convert capitalIntroduced to number
+    this.goalSettingForm.controls['capitalIntroduced'].patchValue(
+      +this.goalSettingForm.controls['capitalIntroduced'].value
+    );
+
+    //convert roi to number
+    this.goalSettingForm.controls['roi'].patchValue(
+      +this.goalSettingForm.controls['roi'].value
+    );
+
+    //convert profit to number
+    this.goalSettingForm.controls['profit'].patchValue(
+      +this.goalSettingForm.controls['profit'].value
+    );
+
+    //convert withdrawn to number
+    this.goalSettingForm.controls['withdrawn'].patchValue(
+      +this.goalSettingForm.controls['withdrawn'].value
+    );
+
+    //convert closingCapital to number
+    this.goalSettingForm.controls['closingCapital'].patchValue(
+      +this.goalSettingForm.controls['closingCapital'].value
+    );
+
+    //convert actualClosingCapital to number
+    this.goalSettingForm.controls['actualClosingCapital'].patchValue(
+      +this.goalSettingForm.controls['actualClosingCapital'].value
+    );
+
+    // Get the updated data from the form
+    const updatedData = this.goalSettingForm.value;
+    this.tradePlanService.updateSelectedRowData(updatedData);
+
+    // reset the form
+    this.goalSettingForm.reset();
   }
 
   onGoalSettingFormInit() {
@@ -137,21 +178,22 @@ export class SettingsComponent {
     // const dateArray: any[] = [];
     for (let i = 0; i < 12; i++) {
       const tempDate = new Date(date);
+
       tempDate.setMonth(date.getMonth() + i);
       // dateArray.push({ date: tempDate });
       this.goalSettingForm.controls['date'].patchValue(tempDate);
       this.calculateProfit(
-        this.openingCapital.value,
-        this.capitalIntroduced.value,
-        this.roi.value
+        +this.openingCapital.value,
+        +this.capitalIntroduced.value,
+        +this.roi.value
       );
       // add the previous month closing capital to the current month opening capital
       if (i > 0) {
         // take closing capital if actual closing capital is not provided
         if (this.actualClosingCapital.value === 0) {
-          this.openingCapital.patchValue(this.closingCapital.value);
+          this.openingCapital.patchValue(+this.closingCapital.value);
         } else {
-          this.openingCapital.patchValue(this.actualClosingCapital.value);
+          this.openingCapital.patchValue(+this.actualClosingCapital.value);
         }
 
         this.calculateProfit(
@@ -159,7 +201,7 @@ export class SettingsComponent {
           this.capitalIntroduced.value,
           this.roi.value
         );
-        this.calculateClosingCapital(this.profit.value);
+        this.calculateClosingCapital(+this.profit.value);
       }
 
       this.updateSettingsData(i);

@@ -1,18 +1,12 @@
 <mat-toolbar color="primary">
   <button mat-button (click)="openDialog()">Plan Trade</button>
   <button mat-button [routerLink]="['/journal']">Journal</button>
-  <button mat-button [routerLink]="['/goal-planning']">goal-planning</button>
-  <button mat-button [routerLink]="['/positions']">Positions</button>
-  <button mat-button [matMenuTriggerFor]=" beforeMenu">Before</button>
-  <mat-menu #beforeMenu="matMenu" xPosition="before">
-    <button mat-menu-item>Item 1</button>
-    <button mat-menu-item>Item 2</button>
-  </mat-menu>
-
-
-  <button mat-button [matMenuTriggerFor]="afterMenu">After</button>
+  <button mat-button [matMenuTriggerFor]="afterMenu">goal-planning</button>
   <mat-menu #afterMenu="matMenu" xPosition="after">
-    <button mat-menu-item>Item 1</button>
-    <button mat-menu-item>Item 2</button>
+    <button mat-menu-item [routerLink]="['/goal-planning']">Intra Day</button>
   </mat-menu>
+  <button mat-button [routerLink]="['/positions']">Positions</button>
+
+
+
 </mat-toolbar>
