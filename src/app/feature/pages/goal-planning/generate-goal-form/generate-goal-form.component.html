@@ -1,0 +1,25 @@
+<form [formGroup]="generatePlanForm" (ngSubmit)="onGeneratePlan()">
+  <div class="row">
+    <div class="col-sm-2">
+      <mat-form-field>
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="col-sm-2">
+      <mat-form-field>
+        <mat-label>Opening Capital</mat-label>
+        <input matInput #message maxlength="256" placeholder="Opening Capital" formControlName="openingCapital">
+        <mat-hint align="start"><strong>Don't disclose personal info</strong> </mat-hint>
+
+      </mat-form-field>
+    </div>
+    <div class="col-md-2">
+
+      <button type="submit" mat-raised-button color="primary">Generate Plan</button>
+    </div>
+  </div>
+</form>

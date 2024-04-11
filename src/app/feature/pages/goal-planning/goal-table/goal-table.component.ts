@@ -85,6 +85,8 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
         this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
       }
     });
+    this.tradePlanService.updateTableData(this.ELEMENT_DATA);
+    console.log(this.ELEMENT_DATA);
   }
 
   calculateOpeningCapital(data: PeriodicElement, row: PeriodicElement) {
