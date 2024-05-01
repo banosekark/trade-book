@@ -41,9 +41,8 @@ export class GenerateGoalFormComponent implements OnInit {
     private fb: FormBuilder,
     private tradePlanService: TradePlanService
   ) {
-    this.tradePlanService.TableDataSubject.subscribe((data) => {
+    this.tradePlanService.settingsData$.subscribe((data) => {
       this.tableDataFromService = data;
-      console.log(this.tableDataFromService);
     });
   }
 
@@ -122,14 +121,7 @@ export class GenerateGoalFormComponent implements OnInit {
             : Math.round(finalAmount * 0.1) + finalAmount,
 
         // next month opening capital should be previous month actual closing capital if it is not provided then it should be opening capital user provided
-        openingCapital:
-          i === 0
-            ? +this.openingCapital?.value
-            : i < 24
-            ? +this.tableDataFromService[i - 1]?.actualClosingCapital
-            : i < 30
-            ? +this.tableDataFromService[i - 1]?.actualClosingCapital
-            : +this.tableDataFromService[i - 1]?.actualClosingCapital,
+        openingCapital: i === 0 ? +this.openingCapital?.value : finalAmount,
       };
       this.tradePlanService.updateSettingsData(tableObject);
 

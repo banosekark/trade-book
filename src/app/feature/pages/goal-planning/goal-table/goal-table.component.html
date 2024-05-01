@@ -49,15 +49,20 @@
       <td mat-cell *matCellDef="let element"> {{element.closingCapital}} </td>
     </ng-container>
 
+
     <!--Actual Closing Capital-->
     <ng-container matColumnDef="actualClosingCapital">
       <th mat-header-cell *matHeaderCellDef> Actual Closing Capital </th>
-      <td mat-cell *matCellDef="let element"> {{element.actualClosingCapital}} </td>
+      <td mat-cell *matCellDef="let element; let i = index">
+        <input [(ngModel)]="element.actualClosingCapital"
+          (ngModelChange)="updateActualClosingCapital(element.actualClosingCapital, i)">
+      </td>
     </ng-container>
 
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;let i = index" [id]="'row_'+ i"></tr>
+
   </table>
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">

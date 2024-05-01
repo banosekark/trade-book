@@ -2,14 +2,14 @@ import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { provideClientHydration } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { TradePlanService } from '../../../services/trade-plan.service';
 
 @Component({
   selector: 'app-goal-table',
   standalone: true,
 
-  imports: [MatTableModule, MatPaginatorModule, DatePipe],
+  imports: [MatTableModule, MatPaginatorModule, DatePipe, FormsModule],
   templateUrl: './goal-table.component.html',
   styleUrl: './goal-table.component.scss',
 })
@@ -53,97 +53,67 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
       this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     });
   }
+
   ngOnInit() {
-    this.tradePlanService.selectedRowData$.subscribe((data: any) => {
-      // ...
-
-      const index = this.tradePlanService.selectedRowIndex;
-      if (index !== -1) {
-        // Update the selected row and all the rows below it
-        for (let i = index; i < this.ELEMENT_DATA.length; i++) {
-          // Apply the business logic from setting.component.ts here
-          this.ELEMENT_DATA[i] = {
-            ...this.ELEMENT_DATA[i],
-            openingCapital: this.updateCapitalValues(
-              data,
-              this.ELEMENT_DATA[i]
-            ), // Use the imported function
-            capitalIntroduced: data.capitalIntroduced,
-            roi: data.roi,
-            profit: this.calculateProfit(data, this.ELEMENT_DATA[i]), // Use the imported function
-            withdrawn: data.withdrawn,
-            closingCapital: this.calculateClosingCapital(
-              data,
-              this.ELEMENT_DATA[i]
-            ), // Use the imported function
-            actualClosingCapital: this.calculateActualClosingCapital(
-              data,
-              this.ELEMENT_DATA[i]
-            ), // Use the imported function
-          };
-        }
-        this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
-      }
+    this.tradePlanService.getDataArray().subscribe((data) => {
+      this.populateTableData(data);
     });
-    this.tradePlanService.updateTableData(this.ELEMENT_DATA);
-    console.log(this.ELEMENT_DATA);
-  }
-
-  calculateOpeningCapital(data: PeriodicElement, row: PeriodicElement) {
-    // previous month closing capital or actual closing capital is the next month opening capital
-    return row.actualClosingCapital === 0
-      ? row.closingCapital
-      : row.actualClosingCapital;
-  }
-
-  calculateProfit(data: PeriodicElement, row: PeriodicElement) {
-    // Calculate the profit
-    const profit =
-      ((row.openingCapital + data.capitalIntroduced) * data.roi) / 100;
-    return profit;
-  }
-
-  calculateClosingCapital(data: PeriodicElement, row: PeriodicElement) {
-    // Calculate the closing capital
-    const closingCapital =
-      row.openingCapital +
-      data.capitalIntroduced +
-      data.profit -
-      data.withdrawn;
-    return closingCapital;
-  }
-
-  calculateActualClosingCapital(data: PeriodicElement, row: PeriodicElement) {
-    // Calculate the actual closing capital if it is not provided
-
-    if (row.actualClosingCapital === 0) {
-      return row.closingCapital;
-    }
-
-    return row.actualClosingCapital;
-  }
-
-  updateCapitalValues(data: PeriodicElement, row: PeriodicElement) {
-    for (let i = 1; i < this.ELEMENT_DATA.length; i++) {
-      const previousRow = this.ELEMENT_DATA[i - 1];
-      const currentRow = this.ELEMENT_DATA[i];
-      if (currentRow.position === row.position) {
-        return this.calculateOpeningCapital(data, previousRow);
-      }
-    }
-    return 0; // Add a default return value here
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 
-  onRowClicked(row: any) {
-    // get the row data on click table row
-    //
+  populateTableData(dataArray: any[]) {
+    // Initialize the first row
 
-    this.tradePlanService.selectedRowIndex = row.position - 1;
-    this.tradePlanService.selectedRowData$.next(row);
+    // Populate the rest of the rows
+    for (let i = 1; i < dataArray.length; i++) {
+      // Set the opening capital of the current row to the actual closing capital of the previous row opening capital should not be NaN
+
+      dataArray[i].openingCapital =
+        this.ELEMENT_DATA[i - 1].actualClosingCapital;
+
+      // Add the current row to the ELEMENT_DATA array
+      this.ELEMENT_DATA[i] = dataArray[i];
+    }
+
+    // Update the data source
+    this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
+  }
+
+  updateActualClosingCapital(newCapital: any, rowIndex: number) {
+    // Convert newCapital to a number
+    newCapital = Number(newCapital);
+
+    // Create a copy of the data array
+    let updatedData = [...this.dataSource.data];
+
+    // Update the actual closing capital of the selected row
+    updatedData[rowIndex].actualClosingCapital = newCapital;
+
+    // Update all rows below the selected row
+    for (let i = rowIndex + 1; i < updatedData.length; i++) {
+      // Convert values to numbers
+      updatedData[i].openingCapital = Number(updatedData[i].openingCapital);
+      updatedData[i].profit = Number(updatedData[i].profit);
+
+      // Set the opening capital of the current row to the actual closing capital of the previous row
+      updatedData[i].openingCapital = newCapital;
+
+      // Calculate the new closing capital based on your logic
+      // For example, if the closing capital is the opening capital plus the profit
+      updatedData[i].closingCapital =
+        updatedData[i].openingCapital + updatedData[i].profit;
+
+      // Update the actual closing capital for the next iteration
+      newCapital = updatedData[i].closingCapital;
+
+      updatedData[i].actualClosingCapital = newCapital;
+    }
+
+    // Assign the updated data to the data source
+    this.dataSource.data = updatedData;
   }
 }
 
