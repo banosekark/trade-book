@@ -13,6 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TradePlanService } from '../../../services/trade-plan.service';
+import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-generate-goal-form',
@@ -27,6 +29,7 @@ import { TradePlanService } from '../../../services/trade-plan.service';
     ReactiveFormsModule,
     MatButtonModule,
     MatDatepickerModule,
+    CommonModule,
   ],
   templateUrl: './generate-goal-form.component.html',
   styleUrl: './generate-goal-form.component.scss',
@@ -37,6 +40,14 @@ export class GenerateGoalFormComponent implements OnInit {
   profit: any;
   withdrawal: any;
   tableDataFromService!: any;
+
+  months: any[] = [
+    { value: 12, viewValue: 12 },
+    { value: 24, viewValue: 24 },
+    { value: 36, viewValue: 36 },
+    { value: 48, viewValue: 48 },
+    { value: 60, viewValue: 60 },
+  ];
   constructor(
     private fb: FormBuilder,
     private tradePlanService: TradePlanService
@@ -52,6 +63,7 @@ export class GenerateGoalFormComponent implements OnInit {
   onGeneratePlanFormInit() {
     this.generatePlanForm = this.fb.group({
       date: [''],
+      months: [''],
       openingCapital: [''],
     });
   }
@@ -60,23 +72,28 @@ export class GenerateGoalFormComponent implements OnInit {
     return this.generatePlanForm.get('date');
   }
 
+  get SelectMonths() {
+    return this.generatePlanForm.get('months');
+  }
+
   get openingCapital() {
     return this.generatePlanForm.get('openingCapital');
   }
 
   onGeneratePlan() {
     const date = this.date?.value;
-    this.onGet12MonthsPlan(date);
+    this.onGetSelectedMonthsPlan(date);
   }
 
-  onGet12MonthsPlan(date: Date) {
+  onGetSelectedMonthsPlan(date: Date) {
     const newDate = new Date(date);
     newDate.setMonth(date.getMonth() + 12);
     // const dateArray: any[] = [];
     let finalAmount = 0;
     let tableObject;
+
     // let profitAmount = 0;
-    for (let i = 0; i < 39; i++) {
+    for (let i = 0; i < this.SelectMonths?.value; i++) {
       const tempDate = new Date(date);
 
       tempDate.setMonth(date.getMonth() + i);
@@ -126,8 +143,6 @@ export class GenerateGoalFormComponent implements OnInit {
       this.tradePlanService.updateSettingsData(tableObject);
 
       finalAmount = tableObject.actualClosingCapital;
-      // profitAmount = tableObject.profit;
-      // i>0 && i < 26?
     }
   }
 }

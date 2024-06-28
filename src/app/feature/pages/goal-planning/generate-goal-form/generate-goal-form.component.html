@@ -1,6 +1,6 @@
 <form [formGroup]="generatePlanForm" (ngSubmit)="onGeneratePlan()">
   <div class="row">
-    <div class="col-sm-2">
+    <div class="col-sm-3">
       <mat-form-field>
         <mat-label>Date</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="date">
@@ -9,7 +9,17 @@
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
+      <mat-form-field>
+        <mat-label>Select Months</mat-label>
+        <mat-select formControlName="months">
+          <mat-option *ngFor="let month of months" [value]="month.value">
+            {{month.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-sm-3">
       <mat-form-field>
         <mat-label>Opening Capital</mat-label>
         <input matInput #message maxlength="256" placeholder="Opening Capital" formControlName="openingCapital">
@@ -17,9 +27,10 @@
 
       </mat-form-field>
     </div>
-    <div class="col-md-2">
+    <div class="col-sm-2">
 
       <button type="submit" mat-raised-button color="primary">Generate Plan</button>
     </div>
+
   </div>
 </form>
