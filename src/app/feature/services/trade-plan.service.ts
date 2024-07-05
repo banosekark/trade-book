@@ -40,4 +40,8 @@ export class TradePlanService {
   updateSelectedRowData(data: any) {
     this.selectedRowData$.next(data);
   }
+
+  getGeneratePlanData(data: any) {
+    this.settingsDataSubject.next(data);
+  }
 }

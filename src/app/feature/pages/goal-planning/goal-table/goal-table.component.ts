@@ -28,25 +28,25 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
   ELEMENT_DATA: PeriodicElement[] = [];
   dataSource = new MatTableDataSource<PeriodicElement>(this.ELEMENT_DATA);
   settingsData: PeriodicElement[] = [];
+  goalTableData: any;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private tradePlanService: TradePlanService) {
     this.ELEMENT_DATA = [];
     this.tradePlanService.settingsData$.subscribe((data) => {
-      // increment the position value
-
-      if (Object.keys(data).length !== 0) {
+      this.goalTableData = data;
+      if (Object.keys(this.goalTableData).length !== 0) {
         this.ELEMENT_DATA.push({
-          date: data?.date,
-          position: data.position + 1,
-          openingCapital: data?.openingCapital,
-          capitalIntroduced: data?.capitalIntroduced,
-          roi: data?.roi,
-          profit: data?.profit,
-          withdrawn: data?.withdrawn,
-          closingCapital: data?.closingCapital,
-          actualClosingCapital: data?.actualClosingCapital,
+          date: this.goalTableData?.date,
+          position: this.goalTableData.position + 1,
+          openingCapital: this.goalTableData?.openingCapital,
+          capitalIntroduced: this.goalTableData?.capitalIntroduced,
+          roi: this.goalTableData?.roi,
+          profit: this.goalTableData?.profit,
+          withdrawn: this.goalTableData?.withdrawn,
+          closingCapital: this.goalTableData?.closingCapital,
+          actualClosingCapital: this.goalTableData?.actualClosingCapital,
         });
       }
 
@@ -55,9 +55,10 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.tradePlanService.getDataArray().subscribe((data) => {
-      this.populateTableData(data);
-    });
+    // this.tradePlanService.getDataArray().subscribe((data) => {
+    //   console.log('populateTableData', data);
+    //   this.populateTableData(data);
+    // });
   }
 
   ngAfterViewInit() {
@@ -171,6 +172,7 @@ export class GoalTableComponent implements OnInit, AfterViewInit {
     }
     this.dataSource.data = updatedData;
     this.populateTableData(this.dataSource.data);
+    this.tradePlanService.getGeneratePlanData(this.dataSource.data);
   }
 }
 

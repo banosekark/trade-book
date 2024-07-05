@@ -140,6 +140,7 @@ export class GenerateGoalFormComponent implements OnInit {
         // next month opening capital should be previous month actual closing capital if it is not provided then it should be opening capital user provided
         openingCapital: i === 0 ? +this.openingCapital?.value : finalAmount,
       };
+      console.log('tableObject', tableObject);
       this.tradePlanService.updateSettingsData(tableObject);
 
       finalAmount = tableObject.actualClosingCapital;

@@ -20,10 +20,14 @@ import { TradePlanService } from '../../services/trade-plan.service';
 export class GoalPlanningComponent {
   goalTableData: any;
 
-  constructor(private tradePlanService: TradePlanService) {
-    this.tradePlanService.getDataArray().subscribe((data) => {
+  constructor(private tradePlanService: TradePlanService) {}
+
+  ngOnInit() {}
+
+  savePlan() {
+    this.tradePlanService.settingsData$.subscribe((data) => {
       this.goalTableData = data;
-      console.log('data', data);
+      console.log('this.goalTableData', this.goalTableData);
     });
   }
 }
